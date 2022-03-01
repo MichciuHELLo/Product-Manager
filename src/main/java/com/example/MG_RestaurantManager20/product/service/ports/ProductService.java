@@ -1,5 +1,8 @@
-package com.example.MG_RestaurantManager20.product;
+package com.example.MG_RestaurantManager20.product.service.ports;
 
+import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
+import com.example.MG_RestaurantManager20.product.domain.Product;
+import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;

@@ -1,5 +1,9 @@
-package com.example.MG_RestaurantManager20.product;
+package com.example.MG_RestaurantManager20.product.gui;
 
+import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
+import com.example.MG_RestaurantManager20.product.domain.Product;
+import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
+import com.example.MG_RestaurantManager20.product.service.ports.ProductService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;

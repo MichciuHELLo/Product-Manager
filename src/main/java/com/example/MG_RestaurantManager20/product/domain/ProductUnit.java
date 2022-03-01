@@ -1,4 +1,4 @@
-package com.example.MG_RestaurantManager20.product;
+package com.example.MG_RestaurantManager20.product.domain;
 
 public enum ProductUnit {
 
