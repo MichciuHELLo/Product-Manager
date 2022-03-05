@@ -1,9 +1,9 @@
 package com.example.MG_RestaurantManager20.product.gui;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
+import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
-import com.example.MG_RestaurantManager20.product.service.ports.ProductService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -27,61 +27,53 @@ import java.util.Optional;
 @Route("Products")
 public class ProductGui extends VerticalLayout {
 
-    private final ProductRepository productRepository;
-    private final ProductService productService;
-
     // ------ Adding visible part ------ //
 
-    private final Grid gridProducts;
+    private final Grid<Product> gridProducts;
 
-    // Adding fields
-    private final Span spanAdd;
+    // Adding fields ---!
+    // private final Span spanAdd;
     private final TextField textFieldAddName;
     private final NumberField numberFieldAddMin;
     private final NumberField numberFieldAddQuantity;
     private final ComboBox<ProductUnit> comboBoxAddUnit;
-    private Button buttonAddProduct;
+    // private Button buttonAddProduct;
 
-    // Editing fields
-    private final Span spanEdit;
+    // Editing fields ---!
+    // private final Span spanEdit;
     private final IntegerField integerFieldEditID;
     private final TextField textFieldEditName;
     private final NumberField numberFieldEditMin;
     private final NumberField numberFieldEditQuantity;
     private final ComboBox<ProductUnit> comboBoxEditUnit;
-    private Button buttonEditProduct;
+    // private Button buttonEditProduct;
 
-    // Deleting fields
-    private final Span spanDelete;
+    // Deleting fields ---!
+    // private final Span spanDelete;
     private final IntegerField integerFieldDeleteID;
     private final RadioButtonGroup<String> radioButtonGroupDelete;
-    private Checkbox checkboxConfirmationDelete;
-    private Button buttonDeleteProduct;
+    private final Checkbox checkboxConfirmationDelete;
+    // private Button buttonDeleteProduct;
 
     private Notification notification;
 
     @Autowired
-    public ProductGui(ProductRepository productRepository, ProductService productService) {
-
-        this.productRepository = productRepository;
-        this.productService = productService;
+    public ProductGui(ProductRepository productRepository, ProductController productController) {
 
         // ------ Setting up the visible part ------ //
-        gridProducts = new Grid<Product>(Product.class);
-        gridProducts.setItems(productService.getProducts());
+        gridProducts = new Grid<>(Product.class);
+        gridProducts.setItems(productController.getProducts());
         gridProducts.setColumns("id", "name", "min", "quantity", "productUnit");
-
-
 
 
         // ------------------------ Adding product fields ------------------------ //
 
-        spanAdd = new Span();
+        Span spanAdd = new Span();
         textFieldAddName = new TextField("Name:");
         numberFieldAddMin = new NumberField("Minimum");
         numberFieldAddQuantity = new NumberField("Quantity");
-        comboBoxAddUnit = new ComboBox("Unit", ProductUnit.values());
-        buttonAddProduct = new Button("Add new product", new Icon(VaadinIcon.PLUS));
+        comboBoxAddUnit = new ComboBox<>("Unit", ProductUnit.values());
+        Button buttonAddProduct = new Button("Add new product", new Icon(VaadinIcon.PLUS));
 
         // ------ Setting up adding fields ( visual ) ------ //
         buttonAddProduct.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -98,28 +90,26 @@ public class ProductGui extends VerticalLayout {
 
         // ------ Action of the adding button ------ //
         buttonAddProduct.addClickListener(buttonClickEvent -> {
-            if(textFieldAddName.isEmpty() || numberFieldAddMin.isEmpty() || numberFieldAddQuantity.isEmpty() || comboBoxAddUnit.isEmpty()){
+            if (textFieldAddName.isEmpty() || numberFieldAddMin.isEmpty() || numberFieldAddQuantity.isEmpty() || comboBoxAddUnit.isEmpty()) {
                 notification = new Notification("Fill all fields!", 3000);
                 notification.open();
-            }
-            else{
+            } else {
                 String convertedName = textFieldAddName.getValue().toLowerCase();
                 convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
 
                 Optional<Product> productOptional = productRepository.findProductByName(convertedName);
-                if(productOptional.isPresent()){
+                if (productOptional.isPresent()) {
                     notification = new Notification("Product \"" + convertedName + "\" already exists!", 3000);
                     notification.open();
-                }
-                else {
-                    if(numberFieldAddQuantity.getValue() < 0 || numberFieldAddMin.getValue() < 0) {
+                } else {
+                    if (numberFieldAddQuantity.getValue() < 0 || numberFieldAddMin.getValue() < 0) {
                         notification = new Notification("Minimum and Quantity can't be less then 0!", 3000);
                         notification.open();
-                    }
-                    else {
-                        productService.addNewProduct(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue());
+                    } else {
+                        Product product = new Product(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue());
+                        productController.addNewProduct(product);
 
-                        gridProducts.setItems(productService.getProducts());
+                        gridProducts.setItems(productController.getProducts());
 
                         notification = new Notification("Product \"" + convertedName + "\" added!", 3000);
                         notification.open();
@@ -134,17 +124,15 @@ public class ProductGui extends VerticalLayout {
         });
 
 
-
-
         // ------------------------ Editing product fields ------------------------ //
 
-        spanEdit = new Span();
+        Span spanEdit = new Span();
         integerFieldEditID = new IntegerField("ID of product you want to Edit:");
         textFieldEditName = new TextField("New name:");
         numberFieldEditMin = new NumberField("New minimum");
         numberFieldEditQuantity = new NumberField("New quantity");
-        comboBoxEditUnit = new ComboBox("New unit", ProductUnit.values());
-        buttonEditProduct = new Button("Edit product", new Icon(VaadinIcon.WRENCH));
+        comboBoxEditUnit = new ComboBox<>("New unit", ProductUnit.values());
+        Button buttonEditProduct = new Button("Edit product", new Icon(VaadinIcon.WRENCH));
 
         buttonEditProduct.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         integerFieldEditID.setWidthFull();
@@ -163,56 +151,52 @@ public class ProductGui extends VerticalLayout {
 
         // ------ Action of the editing button ------ //
         buttonEditProduct.addClickListener(buttonClickEvent -> {
-           if(integerFieldEditID.isEmpty()) {
+            if (integerFieldEditID.isEmpty()) {
                 notification = new Notification("You have to fill ID box!", 3000);
                 notification.open();
-           }
-           else {
-               boolean exists = productRepository.existsById(integerFieldEditID.getValue().longValue());
-               if(!exists) {
-                   notification = new Notification("Product with this ID: '" + integerFieldEditID.getValue() + "' doesn't exists!", 3000);
-                   notification.open();
-               }
-               else {
-                   if(numberFieldEditQuantity.getValue() != null && numberFieldEditQuantity.getValue() < 0 || numberFieldEditMin.getValue() != null && numberFieldEditMin.getValue() < 0) {
-                       notification = new Notification("New Minimum and New Quantity can't be less then 0!", 3000);
-                       notification.open();
-                   }
-                   else {
-                       String convertedName = textFieldEditName.getValue();
-                       if (!textFieldEditName.isEmpty()){
-                           convertedName = textFieldEditName.getValue().toLowerCase();
-                           convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
-                       }
-                       productService.updateProduct(integerFieldEditID.getValue().longValue(), convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue());
+            } else {
+                boolean exists = productRepository.existsById(integerFieldEditID.getValue().longValue());
+                if (!exists) {
+                    notification = new Notification("Product with this ID: '" + integerFieldEditID.getValue() + "' doesn't exists!", 3000);
+                    notification.open();
+                } else {
+                    if (numberFieldEditQuantity.getValue() != null && numberFieldEditQuantity.getValue() < 0 || numberFieldEditMin.getValue() != null && numberFieldEditMin.getValue() < 0) {
+                        notification = new Notification("New Minimum and New Quantity can't be less then 0!", 3000);
+                        notification.open();
+                    } else {
+                        String convertedName = textFieldEditName.getValue();
+                        if (!textFieldEditName.isEmpty()) {
+                            convertedName = textFieldEditName.getValue().toLowerCase();
+                            convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
+                        }
+                        Product product = new Product(convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue());
+                        productController.updateProduct(integerFieldEditID.getValue().longValue(), product);
 
-                       gridProducts.setItems(productService.getProducts());
+                        gridProducts.setItems(productController.getProducts());
 
-                       notification = new Notification("Product with ID: '" + integerFieldEditID.getValue() + "' has been changed!", 3000);
-                       notification.open();
+                        notification = new Notification("Product with ID: '" + integerFieldEditID.getValue() + "' has been changed!", 3000);
+                        notification.open();
 
-                       integerFieldEditID.clear();
-                       textFieldEditName.clear();
-                       numberFieldEditMin.clear();
-                       numberFieldEditQuantity.clear();
-                       comboBoxEditUnit.clear();
-                   }
-               }
-           }
+                        integerFieldEditID.clear();
+                        textFieldEditName.clear();
+                        numberFieldEditMin.clear();
+                        numberFieldEditQuantity.clear();
+                        comboBoxEditUnit.clear();
+                    }
+                }
+            }
         });
-
-
 
 
         // ------------------------ Deleting product fields ------------------------ //
 
-        spanDelete = new Span();
+        Span spanDelete = new Span();
         radioButtonGroupDelete = new RadioButtonGroup<>();
         integerFieldDeleteID = new IntegerField("ID of product you want to Delete");
         checkboxConfirmationDelete = new Checkbox();
-        buttonDeleteProduct = new Button("Delete product", new Icon(VaadinIcon.TRASH));
+        Button buttonDeleteProduct = new Button("Delete product", new Icon(VaadinIcon.TRASH));
 
-        radioButtonGroupDelete. setLabel("Do you want to delete one product or all of them?");
+        radioButtonGroupDelete.setLabel("Do you want to delete one product or all of them?");
         radioButtonGroupDelete.setItems("Delete one", "Delete all");
         integerFieldDeleteID.setHasControls(true);
         integerFieldDeleteID.setEnabled(false);
@@ -228,39 +212,34 @@ public class ProductGui extends VerticalLayout {
         deletingLayout.setAlignItems(Alignment.STRETCH);
 
         radioButtonGroupDelete.addValueChangeListener(event -> {
-            if(radioButtonGroupDelete.getValue().equals("Delete one")){
+            if (radioButtonGroupDelete.getValue().equals("Delete one")) {
                 integerFieldDeleteID.setEnabled(true);
-            }
-            else if(radioButtonGroupDelete.getValue().equals("Delete all")) {
+            } else if (radioButtonGroupDelete.getValue().equals("Delete all")) {
                 integerFieldDeleteID.setEnabled(false);
-            }
-            else {
+            } else {
                 integerFieldDeleteID.setEnabled(false);
             }
         });
 
         // ------ Action of the deleting button ------ //
         buttonDeleteProduct.addClickListener(buttonClickEvent -> {
-            if(radioButtonGroupDelete.getValue() == null){
+            if (radioButtonGroupDelete.getValue() == null) {
                 notification = new Notification("You have to choose one option!", 3000);
                 notification.open();
-            }
-            else{
-                if(radioButtonGroupDelete.getValue().equals("Delete one")) {
-                    if(integerFieldDeleteID.isEmpty() || checkboxConfirmationDelete.getValue().equals(false)) {
+            } else {
+                if (radioButtonGroupDelete.getValue().equals("Delete one")) {
+                    if (integerFieldDeleteID.isEmpty() || checkboxConfirmationDelete.getValue().equals(false)) {
                         notification = new Notification("You have to fill ID box and confirm your choice!", 3000);
                         notification.open();
-                    }
-                    else {
+                    } else {
                         boolean exists = productRepository.existsById(integerFieldDeleteID.getValue().longValue());
-                        if(!exists) {
+                        if (!exists) {
                             notification = new Notification("Product with this ID: '" + integerFieldDeleteID.getValue() + "' doesn't exists!", 3000);
                             notification.open();
-                        }
-                        else {
-                            productService.deleteProduct(integerFieldDeleteID.getValue().longValue());
+                        } else {
+                            productController.deleteProduct(integerFieldDeleteID.getValue().longValue());
 
-                            gridProducts.setItems(productService.getProducts());
+                            gridProducts.setItems(productController.getProducts());
 
                             notification = new Notification("Product with this ID: '" + integerFieldDeleteID.getValue() + "' has been deleted!", 3000);
                             notification.open();
@@ -272,16 +251,14 @@ public class ProductGui extends VerticalLayout {
                             radioButtonGroupDelete.setValue(null);
                         }
                     }
-                }
-                else if(radioButtonGroupDelete.getValue().equals("Delete all")) {
-                    if(checkboxConfirmationDelete.getValue().equals(false)) {
+                } else if (radioButtonGroupDelete.getValue().equals("Delete all")) {
+                    if (checkboxConfirmationDelete.getValue().equals(false)) {
                         notification = new Notification("You have to confirm your choice!", 3000);
                         notification.open();
-                    }
-                    else {
-                        productService.deleteAllProducts();
+                    } else {
+                        productController.deleteAllProducts();
 
-                        gridProducts.setItems(productService.getProducts());
+                        gridProducts.setItems(productController.getProducts());
 
                         notification = new Notification("All products have been deleted!", 3000);
                         notification.open();
@@ -294,8 +271,6 @@ public class ProductGui extends VerticalLayout {
                 }
             }
         });
-
-
 
 
         // ------ Printing all the fields ------ //

@@ -2,10 +2,8 @@ package com.example.MG_RestaurantManager20.product.service.ports;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -22,50 +20,60 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @GetMapping
-    public List<Product> getProducts(){ return productRepository.findAll(); }
+    //    @Get
+    public List<Product> getProducts() {
+        return productRepository.findAll();
+    }
 
-    @PostMapping
-    public void addNewProduct(String productName, Double productMin, Double productQuantity, ProductUnit productUnit){
-        Product product = new Product(productName, productMin, productQuantity, productUnit);
-        productRepository.save(product);
+    //    @Get
+    public Optional<Product> getProduct(Long productId) {
+        return productRepository.findById(productId);
+    }
+
+    //    @Post
+    public Product addNewProduct(Product product) {
+        return productRepository.save(product);
     }
 
 
-    @PutMapping(path = "{productId}")
+    //    @Put
     @Transactional
-    public void updateProduct(Long productId, String productName, Double productMin, Double productQuantity, ProductUnit productUnit){
-        Product product = productRepository.findById(productId).orElseThrow(() -> {
+    public Product updateProduct(Long productId, Product product) {
+        Product oldProduct = productRepository.findById(productId).orElseThrow(() -> {
             throw new IllegalStateException("Product with this ID: '" + productId + "' doesn't exists.");
         });
 
-        if(productName != null && productName.length() > 0 && !Objects.equals(product.getName(), productName)) {
-            Optional<Product> productOptional = productRepository.findProductByName(productName);
-            if(productOptional.isPresent()){
-                throw new IllegalStateException("Product with this NAME: \"" + productName + "\" already exists.");
+        if (product.getName() != null && product.getName().length() > 0 && !Objects.equals(product.getName(), oldProduct.getName())) {
+            Optional<Product> productOptional = productRepository.findProductByName(product.getName());
+            if (productOptional.isPresent()) {
+                throw new IllegalStateException("Product with this NAME: \"" + product.getName() + "\" already exists.");
+            } else {
+                oldProduct.setName(product.getName());
             }
-            else {
-                product.setName(productName);
-            }
         }
 
-        if(productMin != null && !Objects.equals(product.getMin(), productMin)) {
-            product.setMin(productMin);
+        if (product.getMin() != null && !Objects.equals(oldProduct.getMin(), product.getMin())) {
+            oldProduct.setMin(product.getMin());
         }
 
-        if(productQuantity != null && !Objects.equals(product.getQuantity(), productQuantity)) {
-            product.setQuantity(productQuantity);
+        if (product.getQuantity() != null && !Objects.equals(oldProduct.getQuantity(), product.getQuantity())) {
+            oldProduct.setQuantity(product.getQuantity());
         }
 
-        if(productUnit != null && !Objects.equals(product.getProductUnit(), productUnit)) {
-            product.setProductUnit(productUnit);
+        if (product.getProductUnit() != null && !Objects.equals(oldProduct.getProductUnit(), product.getProductUnit())) {
+            oldProduct.setProductUnit(product.getProductUnit());
         }
+        return oldProduct;
     }
 
-    @DeleteMapping
-    public void deleteProduct(Long id){ productRepository.deleteById(id); }
+    //    @Delete
+    public void deleteProduct(Long productId) {
+        productRepository.deleteById(productId);
+    }
 
-    @DeleteMapping
-    public void deleteAllProducts() { productRepository.deleteAll(); }
+    //    @Delete
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
+    }
 
 }
