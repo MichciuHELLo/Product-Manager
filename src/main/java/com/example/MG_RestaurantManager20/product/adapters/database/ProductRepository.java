@@ -12,5 +12,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT s FROM Product s WHERE s.name = ?1")
     Optional<Product> findProductByName(String name);
-
+    
 }
