@@ -1,7 +1,16 @@
 package com.example.MG_RestaurantManager20.product.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Product {
 
@@ -15,8 +24,6 @@ public class Product {
     private Double quantity;
     private ProductUnit productUnit;
 
-    public Product() {
-    }
 
     public Product(String name, Double min, Double quantity, ProductUnit productUnit) {
         this.name = name;
@@ -26,46 +33,6 @@ public class Product {
     }
 
     public Product(Object object) {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getMin() {
-        return min;
-    }
-
-    public void setMin(Double min) {
-        this.min = min;
-    }
-
-    public Double getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Double quantity) {
-        this.quantity = quantity;
-    }
-
-    public ProductUnit getProductUnit() {
-        return productUnit;
-    }
-
-    public void setProductUnit(ProductUnit productUnit) {
-        this.productUnit = productUnit;
     }
 
     @Override
