@@ -24,6 +24,7 @@ public class Product {
     private Double quantity;
     private ProductUnit productUnit;
 
+    //private Recipe recipeDummy;
 
     public Product(String name, Double min, Double quantity, ProductUnit productUnit) {
         this.name = name;
@@ -37,12 +38,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", min=" + min +
-                ", quantity=" + quantity +
-                ", productUnit=" + productUnit +
-                '}';
+        return name;
     }
 }

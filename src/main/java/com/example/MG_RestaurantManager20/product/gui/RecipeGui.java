@@ -5,8 +5,8 @@ import com.example.MG_RestaurantManager20.product.adapters.database.RecipeReposi
 import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
 import com.example.MG_RestaurantManager20.product.adapters.web.RecipeController;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
 import com.example.MG_RestaurantManager20.product.domain.Recipe;
+import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -38,33 +38,28 @@ public class RecipeGui extends VerticalLayout {
     private final TextField textFieldAddName;
     private final TextField textFieldAddDescription;
 
-    // Deleting fields ---!
+    // Recipe fields ---!
+    private final ComboBox<Product> comboBoxAddProductToRecipe;
+    private final ComboBox<Recipe> comboBoxAddToRecipe;
+    private final NumberField numberFieldAddProdRecQuantity;
 
+    // Deleting fields ---!
     private final IntegerField integerFieldDeleteID;
     private final RadioButtonGroup<String> radioButtonGroupDelete;
     private final Checkbox checkboxConfirmationDelete;
 
-    /*
-
-    // Editing fields ---!
-    // private final Span spanEdit;
-    private final IntegerField integerFieldEditID;
-    private final TextField textFieldEditName;
-    private final TextField textFieldEditDescription;
-    // private Button buttonEditProduct;
-*/
 
     private Notification notification;
 
     @Autowired
-    public RecipeGui(RecipeRepository recipeRepository, RecipeController recipeController) {
+    public RecipeGui(RecipeRepository recipeRepository, RecipeController recipeController, ProductRepository productRepository, ProductController productController) {
 
         // ------ Setting up the visible part ------ //
         gridRecipes = new Grid<>(Recipe.class);
         gridRecipes.setItems(recipeController.getAllRecipes());
-        gridRecipes.setColumns("id", "name", "description");
+        gridRecipes.setColumns("id", "name", "description", "recipeDescription");
 
-
+        //region Adding Fields region
         // ------------------------ Adding product fields ------------------------ //
 
         Span spanAdd = new Span();
@@ -109,72 +104,69 @@ public class RecipeGui extends VerticalLayout {
                 }
             }
         });
+        //endregion
 
-/*
-        // ------------------------ Editing product fields ------------------------ //
+        //region Adding to Recipe region
+        // ------------------------ Adding to Recipe fields ------------------------ //
 
-        Span spanEdit = new Span();
-        integerFieldEditID = new IntegerField("ID of product you want to Edit:");
-        textFieldEditName = new TextField("New name:");
-        numberFieldEditMin = new NumberField("New minimum");
-        numberFieldEditQuantity = new NumberField("New quantity");
-        comboBoxEditUnit = new ComboBox<>("New unit", ProductUnit.values());
-        Button buttonEditProduct = new Button("Edit product", new Icon(VaadinIcon.WRENCH));
+        Span spanAddToRecipe = new Span();
 
-        buttonEditProduct.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        integerFieldEditID.setWidthFull();
-        integerFieldEditID.setHasControls(true);
-        numberFieldEditMin.setWidthFull();
-        numberFieldEditMin.setHasControls(true);
-        numberFieldEditQuantity.setWidthFull();
-        numberFieldEditQuantity.setHasControls(true);
-        spanEdit.getElement().setProperty("innerHTML", "<h1>Editing zone</h1>");
+        Recipe[] recipeArray = recipeController.getAllRecipes().toArray(new Recipe[0]);
+        Product[] productsArray = productController.getProducts().toArray(new Product[0]);
 
-        // ------ Setting up editing fields ( visual ) ------ //
-        var editingLayout = new VerticalLayout(spanEdit, integerFieldEditID, textFieldEditName, numberFieldEditMin, numberFieldEditQuantity, comboBoxEditUnit, buttonEditProduct);
-        editingLayout.setSizeFull();
-        editingLayout.setSpacing(true);
-        editingLayout.setAlignItems(Alignment.STRETCH);
+        comboBoxAddToRecipe = new ComboBox<>("Recipe", recipeArray);
+        comboBoxAddProductToRecipe = new ComboBox<>("Product", productsArray);
+        numberFieldAddProdRecQuantity = new NumberField("Needed product quantity");
 
-        // ------ Action of the editing button ------ //
-        buttonEditProduct.addClickListener(buttonClickEvent -> {
-            if (integerFieldEditID.isEmpty()) {
-                notification = new Notification("You have to fill ID box!", 3000);
+        Button buttonAddToRecipe = new Button("Add new product", new Icon(VaadinIcon.PLUS));
+
+        buttonAddToRecipe.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        numberFieldAddProdRecQuantity.setWidthFull();
+        numberFieldAddProdRecQuantity.setHasControls(true);
+
+        spanAddToRecipe.getElement().setProperty("innerHTML", "<h1>Add product to recipe zone</h1>");
+
+        var addingToRecipeLayout = new VerticalLayout(spanAddToRecipe, comboBoxAddToRecipe, comboBoxAddProductToRecipe, numberFieldAddProdRecQuantity, buttonAddToRecipe);
+        addingToRecipeLayout.setSizeFull();
+        addingToRecipeLayout.setSpacing(true);
+        addingToRecipeLayout.setAlignItems(Alignment.STRETCH);
+
+        // ------ Action of the button ------ //
+        buttonAddToRecipe.addClickListener(buttonClickEvent -> {
+            if (comboBoxAddToRecipe.isEmpty() || comboBoxAddProductToRecipe.isEmpty() || numberFieldAddProdRecQuantity.isEmpty()) {
+                notification = new Notification("Fill all fields!", 3000);
                 notification.open();
             } else {
-                boolean exists = productRepository.existsById(integerFieldEditID.getValue().longValue());
-                if (!exists) {
-                    notification = new Notification("Product with this ID: '" + integerFieldEditID.getValue() + "' doesn't exists!", 3000);
+                if (numberFieldAddProdRecQuantity.getValue() < 0) {
+                    notification = new Notification("Minimum and Quantity can't be less then 0!", 3000);
                     notification.open();
                 } else {
-                    if (numberFieldEditQuantity.getValue() != null && numberFieldEditQuantity.getValue() < 0 || numberFieldEditMin.getValue() != null && numberFieldEditMin.getValue() < 0) {
-                        notification = new Notification("New Minimum and New Quantity can't be less then 0!", 3000);
+
+                    Optional<Recipe> recipeOptional = recipeRepository.findProductByName(comboBoxAddToRecipe.getValue().getName());
+                    if(!recipeOptional.isPresent())
+                    {
+                        notification = new Notification("No such stuff in database", 3000);
                         notification.open();
-                    } else {
-                        String convertedName = textFieldEditName.getValue();
-                        if (!textFieldEditName.isEmpty()) {
-                            convertedName = textFieldEditName.getValue().toLowerCase();
-                            convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
-                        }
-                        Product product = new Product(convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue());
-                        productController.updateProduct(integerFieldEditID.getValue().longValue(), product);
-
-                        gridProducts.setItems(productController.getProducts());
-
-                        notification = new Notification("Product with ID: '" + integerFieldEditID.getValue() + "' has been changed!", 3000);
-                        notification.open();
-
-                        integerFieldEditID.clear();
-                        textFieldEditName.clear();
-                        numberFieldEditMin.clear();
-                        numberFieldEditQuantity.clear();
-                        comboBoxEditUnit.clear();
                     }
+
+                    ProductStructure tempProductStructure = new ProductStructure(comboBoxAddProductToRecipe.getValue(), numberFieldAddProdRecQuantity.getValue(), comboBoxAddProductToRecipe.getValue().getProductUnit());
+
+                    recipeController.updateRecipeDescription(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
+
+                    gridRecipes.setItems(recipeController.getAllRecipes());
+
+                    notification = new Notification(tempProductStructure.toString() + "\" added!", 3000);
+                    notification.open();
+                    comboBoxAddProductToRecipe.clear();
+                    numberFieldAddProdRecQuantity.clear();
                 }
             }
         });
-*/
 
+
+        //endregion
+
+        //region Deleting Fields region
         // ------------------------ Deleting product fields ------------------------ //
 
         Span spanDelete = new Span();
@@ -258,11 +250,11 @@ public class RecipeGui extends VerticalLayout {
                 }
             }
         });
-
+        //endregion
 
         // ------ Printing all the fields ------ //
 
-        var allLayouts = new HorizontalLayout(addingLayout, deletingLayout);//, editingLayout, deletingLayout);
+        var allLayouts = new HorizontalLayout(addingLayout, addingToRecipeLayout, deletingLayout);//, editingLayout, deletingLayout);
         allLayouts.setWidthFull();
         allLayouts.setSpacing(true);
         allLayouts.setAlignItems(Alignment.BASELINE);
