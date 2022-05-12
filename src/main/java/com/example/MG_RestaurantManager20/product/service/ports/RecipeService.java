@@ -27,8 +27,8 @@ public class RecipeService {
         recipeRepository.save(recipe);
     }
 
-    public void deleteRecipe(long longValue) {
-        recipeRepository.deleteById(longValue);
+    public void deleteRecipe(long recipeId) {
+        recipeRepository.deleteById(recipeId);
     }
 
     public void deleteAllRecipes() {

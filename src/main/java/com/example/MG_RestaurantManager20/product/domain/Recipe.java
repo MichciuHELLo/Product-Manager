@@ -19,9 +19,7 @@ public class Recipe {
     private Long id;
 
     private String name;
-
-
-    // private List<Product> products;
+    
     @ElementCollection
     private Map<Product, Integer> productsWithQuantity;
     private String description;

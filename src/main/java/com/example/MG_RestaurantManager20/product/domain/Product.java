@@ -24,8 +24,6 @@ public class Product {
     private Double quantity;
     private ProductUnit productUnit;
 
-    //private Recipe recipeDummy;
-
     public Product(String name, Double min, Double quantity, ProductUnit productUnit) {
         this.name = name;
         this.min = min;

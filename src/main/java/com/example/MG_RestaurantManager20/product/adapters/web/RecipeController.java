@@ -20,27 +20,27 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("/r")
+    @GetMapping("recipes/all")
     public List<Recipe> getAllRecipes() {
         return recipeService.getAllRecipes();
     }
 
-    @PutMapping("updateProduct/{recipeName}")
+    @PutMapping("recipes/update/{recipeName")
     public void updateRecipeDescription(@PathVariable("recipeName") String recipeName, ProductStructure productStructure) {
         recipeService.updateRecipeDescription(recipeName, productStructure);
     }
 
-    @PostMapping("/addRecipe")
+    @PostMapping("recipes/add")
     public void addNewRecipe(@RequestBody Recipe recipe) {
         recipeService.addNewRecipe(recipe);
     }
 
-    @DeleteMapping("/deleteRecipes/{recipeId}")
+    @DeleteMapping("recipes/delete/{recipeId}")
     public void deleteRecipe(@PathVariable("recipeId") Long longValue) {
         recipeService.deleteRecipe(longValue);
     }
 
-    @DeleteMapping("/deleteRecipes")
+    @DeleteMapping("recipes/delete/all")
     public void deleteAllRecipes() {
         recipeService.deleteAllRecipes();
     }
