@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.swing.*;
 import java.util.Optional;
 
 @Route("Products")
@@ -32,28 +33,24 @@ public class ProductGui extends VerticalLayout {
     private final Grid<Product> gridProducts;
 
     // Adding fields ---!
-    // private final Span spanAdd;
     private final TextField textFieldAddName;
     private final NumberField numberFieldAddMin;
     private final NumberField numberFieldAddQuantity;
     private final ComboBox<ProductUnit> comboBoxAddUnit;
-    // private Button buttonAddProduct;
+
+
 
     // Editing fields ---!
-    // private final Span spanEdit;
     private final IntegerField integerFieldEditID;
     private final TextField textFieldEditName;
     private final NumberField numberFieldEditMin;
     private final NumberField numberFieldEditQuantity;
     private final ComboBox<ProductUnit> comboBoxEditUnit;
-    // private Button buttonEditProduct;
 
     // Deleting fields ---!
-    // private final Span spanDelete;
     private final IntegerField integerFieldDeleteID;
     private final RadioButtonGroup<String> radioButtonGroupDelete;
     private final Checkbox checkboxConfirmationDelete;
-    // private Button buttonDeleteProduct;
 
     private Notification notification;
 
@@ -66,6 +63,8 @@ public class ProductGui extends VerticalLayout {
         gridProducts.setColumns("id", "name", "min", "quantity", "productUnit");
 
 
+
+        //region Adding Fields region
         // ------------------------ Adding product fields ------------------------ //
 
         Span spanAdd = new Span();
@@ -122,8 +121,9 @@ public class ProductGui extends VerticalLayout {
                 }
             }
         });
+//endregion
 
-
+        //region Editing Fields region
         // ------------------------ Editing product fields ------------------------ //
 
         Span spanEdit = new Span();
@@ -186,8 +186,10 @@ public class ProductGui extends VerticalLayout {
                 }
             }
         });
+//
+// endregion
 
-
+        //region Deleting Fields region
         // ------------------------ Deleting product fields ------------------------ //
 
         Span spanDelete = new Span();
@@ -271,7 +273,7 @@ public class ProductGui extends VerticalLayout {
                 }
             }
         });
-
+        //endregion
 
         // ------ Printing all the fields ------ //
 
