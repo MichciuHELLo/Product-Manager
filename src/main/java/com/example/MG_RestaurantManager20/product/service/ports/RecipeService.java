@@ -36,18 +36,18 @@ public class RecipeService {
     }
 
     @Transactional
-    public void updateRecipeDescription(String recipeName, ProductStructure productStructure) {
+    public void addToRequiredProducts(String recipeName, ProductStructure productStructure) {
 
         Recipe repoRecipe = recipeRepository.findProductByName(recipeName).orElseThrow(() -> {
             throw new IllegalStateException("No such recipe in data base");
         });
 
 
-        if (repoRecipe.getRecipeDescription().isBlank()) {
-            repoRecipe.setRecipeDescription(productStructure.toString());
+        if (repoRecipe.getRequiredProducts().isBlank()) {
+            repoRecipe.setRequiredProducts(productStructure.toString());
         } else {
 
-            repoRecipe.setRecipeDescription(repoRecipe.getRecipeDescription() + productStructure.toString());
+            repoRecipe.setRequiredProducts(repoRecipe.getRequiredProducts() + productStructure.toString());
         }
     }
 }

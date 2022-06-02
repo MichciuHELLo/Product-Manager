@@ -1,6 +1,5 @@
 package com.example.MG_RestaurantManager20.product.adapters.web;
 
-import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.domain.Recipe;
 import com.example.MG_RestaurantManager20.product.service.ports.RecipeService;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
@@ -26,8 +25,8 @@ public class RecipeController {
     }
 
     @PutMapping("recipes/update/{recipeName")
-    public void updateRecipeDescription(@PathVariable("recipeName") String recipeName, ProductStructure productStructure) {
-        recipeService.updateRecipeDescription(recipeName, productStructure);
+    public void addToRequiredProducts(@PathVariable("recipeName") String recipeName, ProductStructure productStructure) {
+        recipeService.addToRequiredProducts(recipeName, productStructure);
     }
 
     @PostMapping("recipes/add")
