@@ -57,7 +57,7 @@ public class RecipeGui extends VerticalLayout {
         // ------ Setting up the visible part ------ //
         gridRecipes = new Grid<>(Recipe.class);
         gridRecipes.setItems(recipeController.getAllRecipes());
-        gridRecipes.setColumns("id", "name", "description", "recipeDescription");
+        gridRecipes.setColumns("id", "name", "description", "requiredProducts");
 
         //region Adding Fields region
         // ------------------------ Adding product fields ------------------------ //
@@ -106,7 +106,7 @@ public class RecipeGui extends VerticalLayout {
         });
         //endregion
 
-        //region Adding to Recipe region
+        //region Adding to Required Products
         // ------------------------ Adding to Recipe fields ------------------------ //
 
         Span spanAddToRecipe = new Span();
@@ -124,7 +124,7 @@ public class RecipeGui extends VerticalLayout {
         numberFieldAddProdRecQuantity.setWidthFull();
         numberFieldAddProdRecQuantity.setHasControls(true);
 
-        spanAddToRecipe.getElement().setProperty("innerHTML", "<h1>Add product to recipe zone</h1>");
+        spanAddToRecipe.getElement().setProperty("innerHTML", "<h1>Add required products</h1>");
 
         var addingToRecipeLayout = new VerticalLayout(spanAddToRecipe, comboBoxAddToRecipe, comboBoxAddProductToRecipe, numberFieldAddProdRecQuantity, buttonAddToRecipe);
         addingToRecipeLayout.setSizeFull();
@@ -141,17 +141,9 @@ public class RecipeGui extends VerticalLayout {
                     notification = new Notification("Minimum and Quantity can't be less then 0!", 3000);
                     notification.open();
                 } else {
-
-                    Optional<Recipe> recipeOptional = recipeRepository.findProductByName(comboBoxAddToRecipe.getValue().getName());
-                    if(!recipeOptional.isPresent())
-                    {
-                        notification = new Notification("No such stuff in database", 3000);
-                        notification.open();
-                    }
-
                     ProductStructure tempProductStructure = new ProductStructure(comboBoxAddProductToRecipe.getValue(), numberFieldAddProdRecQuantity.getValue(), comboBoxAddProductToRecipe.getValue().getProductUnit());
 
-                    recipeController.updateRecipeDescription(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
+                    recipeController.addToRequiredProducts(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
 
                     gridRecipes.setItems(recipeController.getAllRecipes());
 
