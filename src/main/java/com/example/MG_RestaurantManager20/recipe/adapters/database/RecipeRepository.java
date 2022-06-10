@@ -1,7 +1,7 @@
-package com.example.MG_RestaurantManager20.product.adapters.database;
+package com.example.MG_RestaurantManager20.recipe.adapters.database;
 
 
-import com.example.MG_RestaurantManager20.product.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
