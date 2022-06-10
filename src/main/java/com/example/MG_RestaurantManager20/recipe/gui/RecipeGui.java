@@ -1,11 +1,11 @@
-package com.example.MG_RestaurantManager20.product.gui;
+package com.example.MG_RestaurantManager20.recipe.gui;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
-import com.example.MG_RestaurantManager20.product.adapters.database.RecipeRepository;
+import com.example.MG_RestaurantManager20.recipe.adapters.database.RecipeRepository;
 import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
-import com.example.MG_RestaurantManager20.product.adapters.web.RecipeController;
+import com.example.MG_RestaurantManager20.recipe.adapters.web.RecipeController;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
