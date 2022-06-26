@@ -16,19 +16,20 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //  @Transient
     private Long id;
 
     private String name;
     private Double min;
     private Double quantity;
     private ProductUnit productUnit;
+    private Double calories;
 
-    public Product(String name, Double min, Double quantity, ProductUnit productUnit) {
+    public Product(String name, Double min, Double quantity, ProductUnit productUnit, Double calories) {
         this.name = name;
         this.min = min;
         this.quantity = quantity;
         this.productUnit = productUnit;
+        this.calories = calories;
     }
 
     public Product(Object object) {

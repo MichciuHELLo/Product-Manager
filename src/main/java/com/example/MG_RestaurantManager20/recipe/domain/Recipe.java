@@ -22,13 +22,14 @@ public class Recipe {
     private Map<Product, Integer> productsWithQuantity;
     private String description;
     private String requiredProducts;
+    private Double calories;
 
-
-    public Recipe(String name, String description)
+    public Recipe(String name, String description, Double calories)
     {
         this.name = name;
         this.description = description;
         this.requiredProducts = "";
+        this.calories = calories;
     }
 
     @Override
