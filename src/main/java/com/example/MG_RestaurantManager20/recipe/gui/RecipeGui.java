@@ -7,6 +7,7 @@ import com.example.MG_RestaurantManager20.recipe.adapters.web.RecipeController;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
+import com.example.MG_RestaurantManager20.recipe.service.IRecipeService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -30,6 +31,8 @@ import java.util.Optional;
 @Route("Recipes")
 public class RecipeGui extends VerticalLayout {
 
+    @Autowired
+    private IRecipeService iRecipeService;
 
     // ------ Adding visible part ------ //
     private final Grid<Recipe> gridRecipes;
@@ -48,7 +51,6 @@ public class RecipeGui extends VerticalLayout {
     private final RadioButtonGroup<String> radioButtonGroupDelete;
     private final Checkbox checkboxConfirmationDelete;
 
-
     private Notification notification;
 
     @Autowired
@@ -57,7 +59,7 @@ public class RecipeGui extends VerticalLayout {
         // ------ Setting up the visible part ------ //
         gridRecipes = new Grid<>(Recipe.class);
         gridRecipes.setItems(recipeController.getAllRecipes());
-        gridRecipes.setColumns("id", "name", "description", "requiredProducts");
+        gridRecipes.setColumns("id", "name", "description", "requiredProducts", "calories");
 
         //region Adding Fields region
         // ------------------------ Adding product fields ------------------------ //
@@ -91,7 +93,7 @@ public class RecipeGui extends VerticalLayout {
                     notification.open();
                 } else {
 
-                    Recipe recipe = new Recipe(convertedName, textFieldAddDescription.getValue());
+                    Recipe recipe = new Recipe(convertedName, textFieldAddDescription.getValue(), 0D);
                     recipeController.addNewRecipe(recipe);
 
                     gridRecipes.setItems(recipeController.getAllRecipes());
@@ -142,6 +144,8 @@ public class RecipeGui extends VerticalLayout {
                     notification.open();
                 } else {
                     ProductStructure tempProductStructure = new ProductStructure(comboBoxAddProductToRecipe.getValue(), numberFieldAddProdRecQuantity.getValue(), comboBoxAddProductToRecipe.getValue().getProductUnit());
+
+                    iRecipeService.updateRecipeCalories(comboBoxAddToRecipe.getValue(), tempProductStructure);
 
                     recipeController.addToRequiredProducts(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
 

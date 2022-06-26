@@ -2,8 +2,8 @@ package com.example.MG_RestaurantManager20.product.gui;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
 import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
-import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
+import com.example.MG_RestaurantManager20.product.domain.*;
+import com.example.MG_RestaurantManager20.product.service.ParsingService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -22,11 +22,16 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
 import java.util.Optional;
 
 @Route("Products")
 public class ProductGui extends VerticalLayout {
+
+    private static final Double DEFAULT_CALORIES_AMOUNT = 0D;
+    private static final String NAME_OF_SEARCHING_OBJECT = "Calories";
+
+    @Autowired
+    private ParsingService parsingService;
 
     // ------ Adding visible part ------ //
 
@@ -37,8 +42,6 @@ public class ProductGui extends VerticalLayout {
     private final NumberField numberFieldAddMin;
     private final NumberField numberFieldAddQuantity;
     private final ComboBox<ProductUnit> comboBoxAddUnit;
-
-
 
     // Editing fields ---!
     private final IntegerField integerFieldEditID;
@@ -60,7 +63,7 @@ public class ProductGui extends VerticalLayout {
         // ------ Setting up the visible part ------ //
         gridProducts = new Grid<>(Product.class);
         gridProducts.setItems(productController.getProducts());
-        gridProducts.setColumns("id", "name", "min", "quantity", "productUnit");
+        gridProducts.setColumns("id", "name", "min", "quantity", "productUnit", "calories");
 
 
 
@@ -105,7 +108,20 @@ public class ProductGui extends VerticalLayout {
                         notification = new Notification("Minimum and Quantity can't be less then 0!", 3000);
                         notification.open();
                     } else {
-                        Product product = new Product(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue());
+                        Product product = new Product(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue(), DEFAULT_CALORIES_AMOUNT);
+
+                        ProductResponseData productResponseData = parsingService.parseTranslator(product.getName());
+                        ProductTypeResponseData productIdResponseData = parsingService.parseProductIdByName(productResponseData.getResponseData().getTranslatedText());
+                        if(!productIdResponseData.getProducts().isEmpty() && productIdResponseData.getProducts().get(0).getId() != null) {
+                            ProductInformationResponseData productNutritionResponseData = parsingService.parseProductKcalById(productIdResponseData.getProducts().get(0).getId());
+
+                            for (int i = 0; i < productNutritionResponseData.getNutrition().getNutrients().size(); i++) {
+                                if (productNutritionResponseData.getNutrition().getNutrients().get(i).getName().equals(NAME_OF_SEARCHING_OBJECT)) {
+                                    product.setCalories(productNutritionResponseData.getNutrition().getNutrients().get(i).getAmount());
+                                }
+                            }
+                        }
+
                         productController.addNewProduct(product);
 
                         gridProducts.setItems(productController.getProducts());
@@ -169,7 +185,8 @@ public class ProductGui extends VerticalLayout {
                             convertedName = textFieldEditName.getValue().toLowerCase();
                             convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
                         }
-                        Product product = new Product(convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue());
+                        Product oldProduct = productRepository.getById(integerFieldEditID.getValue().longValue());
+                        Product product = new Product(convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue(), oldProduct.getCalories());
                         productController.updateProduct(integerFieldEditID.getValue().longValue(), product);
 
                         gridProducts.setItems(productController.getProducts());
