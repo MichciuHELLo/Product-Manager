@@ -1,13 +1,12 @@
 package com.example.MG_RestaurantManager20.recipe.gui;
 
-import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
-import com.example.MG_RestaurantManager20.recipe.adapters.database.RecipeRepository;
-import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
-import com.example.MG_RestaurantManager20.recipe.adapters.web.RecipeController;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
-import com.example.MG_RestaurantManager20.recipe.service.IRecipeService;
+import com.example.MG_RestaurantManager20.recipe.adapters.database.RecipeRepository;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeCaloriesService;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -32,7 +31,7 @@ import java.util.Optional;
 public class RecipeGui extends VerticalLayout {
 
     @Autowired
-    private IRecipeService iRecipeService;
+    private RecipeCaloriesService recipeCaloriesService;
 
     // ------ Adding visible part ------ //
     private final Grid<Recipe> gridRecipes;
@@ -54,11 +53,11 @@ public class RecipeGui extends VerticalLayout {
     private Notification notification;
 
     @Autowired
-    public RecipeGui(RecipeRepository recipeRepository, RecipeController recipeController, ProductRepository productRepository, ProductController productController) {
+    public RecipeGui(RecipeRepository recipeRepository, RecipeService recipeService, ProductService productService) {
 
         // ------ Setting up the visible part ------ //
         gridRecipes = new Grid<>(Recipe.class);
-        gridRecipes.setItems(recipeController.getAllRecipes());
+        gridRecipes.setItems(recipeService.getAllRecipes());
         gridRecipes.setColumns("id", "name", "description", "requiredProducts", "calories");
 
         //region Adding Fields region
@@ -94,9 +93,9 @@ public class RecipeGui extends VerticalLayout {
                 } else {
 
                     Recipe recipe = new Recipe(convertedName, textFieldAddDescription.getValue(), 0D);
-                    recipeController.addNewRecipe(recipe);
+                    recipeService.addNewRecipe(recipe);
 
-                    gridRecipes.setItems(recipeController.getAllRecipes());
+                    gridRecipes.setItems(recipeService.getAllRecipes());
 
                     notification = new Notification("Recipe \"" + convertedName + "\" added!", 3000);
                     notification.open();
@@ -113,8 +112,8 @@ public class RecipeGui extends VerticalLayout {
 
         Span spanAddToRecipe = new Span();
 
-        Recipe[] recipeArray = recipeController.getAllRecipes().toArray(new Recipe[0]);
-        Product[] productsArray = productController.getProducts().toArray(new Product[0]);
+        Recipe[] recipeArray = recipeService.getAllRecipes().toArray(new Recipe[0]);
+        Product[] productsArray = productService.getProducts().toArray(new Product[0]);
 
         comboBoxAddToRecipe = new ComboBox<>("Recipe", recipeArray);
         comboBoxAddProductToRecipe = new ComboBox<>("Product", productsArray);
@@ -145,11 +144,11 @@ public class RecipeGui extends VerticalLayout {
                 } else {
                     ProductStructure tempProductStructure = new ProductStructure(comboBoxAddProductToRecipe.getValue(), numberFieldAddProdRecQuantity.getValue(), comboBoxAddProductToRecipe.getValue().getProductUnit());
 
-                    iRecipeService.updateRecipeCalories(comboBoxAddToRecipe.getValue(), tempProductStructure);
+                    recipeCaloriesService.updateRecipeCalories(comboBoxAddToRecipe.getValue(), tempProductStructure);
 
-                    recipeController.addToRequiredProducts(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
+                    recipeService.addToRequiredProducts(comboBoxAddToRecipe.getValue().toString(), tempProductStructure);
 
-                    gridRecipes.setItems(recipeController.getAllRecipes());
+                    gridRecipes.setItems(recipeService.getAllRecipes());
 
                     notification = new Notification(tempProductStructure.toString() + "\" added!", 3000);
                     notification.open();
@@ -212,9 +211,9 @@ public class RecipeGui extends VerticalLayout {
                             notification = new Notification("Recipe with this ID: '" + integerFieldDeleteID.getValue() + "' doesn't exists!", 3000);
                             notification.open();
                         } else {
-                            recipeController.deleteRecipe(integerFieldDeleteID.getValue().longValue());
+                            recipeService.deleteRecipe(integerFieldDeleteID.getValue().longValue());
 
-                            gridRecipes.setItems(recipeController.getAllRecipes());
+                            gridRecipes.setItems(recipeService.getAllRecipes());
 
                             notification = new Notification("Recipe with this ID: '" + integerFieldDeleteID.getValue() + "' has been deleted!", 3000);
                             notification.open();
@@ -231,9 +230,9 @@ public class RecipeGui extends VerticalLayout {
                         notification = new Notification("You have to confirm your choice!", 3000);
                         notification.open();
                     } else {
-                        recipeController.deleteAllRecipes();
+                        recipeService.deleteAllRecipes();
 
-                        gridRecipes.setItems(recipeController.getAllRecipes());
+                        gridRecipes.setItems(recipeService.getAllRecipes());
 
                         notification = new Notification("All products have been deleted!", 3000);
                         notification.open();

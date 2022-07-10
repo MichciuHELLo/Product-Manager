@@ -3,7 +3,7 @@ package com.example.MG_RestaurantManager20.product.service.impl;
 import com.example.MG_RestaurantManager20.product.domain.ProductTypeResponseData;
 import com.example.MG_RestaurantManager20.product.domain.ProductInformationResponseData;
 import com.example.MG_RestaurantManager20.product.domain.ProductResponseData;
-import com.example.MG_RestaurantManager20.product.service.ParsingService;
+import com.example.MG_RestaurantManager20.product.service.JsonParsingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @PropertySource(value = {"classpath:application-dev.properties"})
-public class JsonParsingService implements ParsingService {
+public class JsonParsingServiceImpl implements JsonParsingService {
 
     private final static String HEADER_TRANSLATOR_NAME = "X-RapidAPI-Key";
     @Value("${rapidapi.apikey}")

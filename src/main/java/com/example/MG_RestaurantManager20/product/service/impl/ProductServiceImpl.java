@@ -1,8 +1,9 @@
-package com.example.MG_RestaurantManager20.product.service.ports;
+package com.example.MG_RestaurantManager20.product.service.impl;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.MG_RestaurantManager20.product.service.ProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -11,14 +12,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ProductService {
+@AllArgsConstructor
+public class ProductServiceImpl implements ProductService {
 
     final private ProductRepository productRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     //    @Get
     public List<Product> getProducts() {

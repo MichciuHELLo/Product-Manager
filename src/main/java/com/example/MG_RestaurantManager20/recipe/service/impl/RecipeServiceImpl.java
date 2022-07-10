@@ -3,25 +3,48 @@ package com.example.MG_RestaurantManager20.recipe.service.impl;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
 import com.example.MG_RestaurantManager20.recipe.adapters.database.RecipeRepository;
 import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
-import com.example.MG_RestaurantManager20.recipe.service.IRecipeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
-public class RecipeServiceImpl implements IRecipeService {
+@AllArgsConstructor
+public class RecipeServiceImpl implements RecipeService {
 
-    @Autowired
-    private RecipeRepository recipeRepository;
+    private final RecipeRepository recipeRepository;
 
-    @Override
+    public List<Recipe> getAllRecipes() {
+        return recipeRepository.findAll();
+    }
+
+    public void addNewRecipe(Recipe recipe) {
+        recipeRepository.save(recipe);
+    }
+
+    public void deleteRecipe(Long recipeId) {
+        recipeRepository.deleteById(recipeId);
+    }
+
+    public void deleteAllRecipes() {
+        recipeRepository.deleteAll();
+    }
+
     @Transactional
-    public void updateRecipeCalories(Recipe recipe, ProductStructure productStructure) {
-        if(productStructure.productQuantity > 0 && productStructure.product.getCalories() > 0) {
-            Double currentRecipeCalories = recipeRepository.getRecipeCaloriesById(recipe.getId());
-            currentRecipeCalories += recipe.getCalories() + productStructure.productQuantity * productStructure.product.getCalories();
-            recipeRepository.updateRecipeCalories(recipe.getId(), currentRecipeCalories);
+    public void addToRequiredProducts(String recipeName, ProductStructure productStructure) {
+
+        Recipe repoRecipe = recipeRepository.findProductByName(recipeName).orElseThrow(() -> {
+            throw new IllegalStateException("No such recipe in data base");
+        });
+
+
+        if (repoRecipe.getRequiredProducts().isBlank()) {
+            repoRecipe.setRequiredProducts(productStructure.toString());
+        } else {
+
+            repoRecipe.setRequiredProducts(repoRecipe.getRequiredProducts() + productStructure.toString());
         }
     }
 }
