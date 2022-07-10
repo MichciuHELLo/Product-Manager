@@ -1,23 +1,19 @@
 package com.example.MG_RestaurantManager20.recipe.adapters.web;
 
-import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
-import com.example.MG_RestaurantManager20.recipe.service.ports.RecipeService;
 import com.example.MG_RestaurantManager20.product.struct.ProductStructure;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 public class RecipeController {
 
     private final RecipeService recipeService;
-
-    @Autowired
-    public RecipeController(RecipeService recipeService) {
-        this.recipeService = recipeService;
-    }
 
     @GetMapping("recipes/all")
     public List<Recipe> getAllRecipes() {

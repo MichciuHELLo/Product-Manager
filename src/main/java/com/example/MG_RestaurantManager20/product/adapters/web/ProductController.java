@@ -1,8 +1,8 @@
 package com.example.MG_RestaurantManager20.product.adapters.web;
 
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.service.ports.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.MG_RestaurantManager20.product.service.ProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
 public class ProductController {
-    private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
 
     @GetMapping("/products/all")
     public List<Product> getProducts() {

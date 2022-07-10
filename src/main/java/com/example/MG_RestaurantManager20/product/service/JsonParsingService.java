@@ -4,7 +4,7 @@ import com.example.MG_RestaurantManager20.product.domain.ProductTypeResponseData
 import com.example.MG_RestaurantManager20.product.domain.ProductInformationResponseData;
 import com.example.MG_RestaurantManager20.product.domain.ProductResponseData;
 
-public interface ParsingService {
+public interface JsonParsingService {
 
     ProductResponseData parseTranslator(String productPlName);
 

@@ -3,7 +3,7 @@ package com.example.MG_RestaurantManager20.Product;
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
-import com.example.MG_RestaurantManager20.product.service.ports.ProductService;
+import com.example.MG_RestaurantManager20.product.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+public class ProductServiceImplTest {
 
     private static final String PRODUCT_DEFAULT_NAME = "Banan";
     private static final Double PRODUCT_DEFAULT_MINIMUM_QUANTITY = 1D;
@@ -29,7 +29,7 @@ public class ProductServiceTest {
     private static final Double PRODUCT_DEFAULT_CALORIES = 0D;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productServiceImpl;
 
     @Mock
     private ProductRepository productRepository;
@@ -42,7 +42,7 @@ public class ProductServiceTest {
 
         when(productRepository.findAll()).thenReturn(List.of(product, product2));
 
-        List<Product> result = productService.getProducts();
+        List<Product> result = productServiceImpl.getProducts();
 
         assertThat(result).isNotNull();
         assertThat(result).asList().isNotEmpty();
@@ -57,7 +57,7 @@ public class ProductServiceTest {
 
         when(productRepository.findById(any())).thenReturn(Optional.of(product));
 
-        Optional<Product> result = productService.getProduct(any());
+        Optional<Product> result = productServiceImpl.getProduct(any());
 
         assertThat(result).contains(product);
         verify(productRepository).findById(any());
@@ -70,7 +70,7 @@ public class ProductServiceTest {
 
         when(productRepository.save(any())).thenReturn(product);
 
-        Product result = productService.addNewProduct(product);
+        Product result = productServiceImpl.addNewProduct(product);
 
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo(product);

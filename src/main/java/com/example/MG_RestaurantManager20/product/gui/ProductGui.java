@@ -1,9 +1,9 @@
 package com.example.MG_RestaurantManager20.product.gui;
 
 import com.example.MG_RestaurantManager20.product.adapters.database.ProductRepository;
-import com.example.MG_RestaurantManager20.product.adapters.web.ProductController;
 import com.example.MG_RestaurantManager20.product.domain.*;
-import com.example.MG_RestaurantManager20.product.service.ParsingService;
+import com.example.MG_RestaurantManager20.product.service.JsonParsingService;
+import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -31,7 +31,7 @@ public class ProductGui extends VerticalLayout {
     private static final String NAME_OF_SEARCHING_OBJECT = "Calories";
 
     @Autowired
-    private ParsingService parsingService;
+    private JsonParsingService jsonParsingService;
 
     // ------ Adding visible part ------ //
 
@@ -58,11 +58,11 @@ public class ProductGui extends VerticalLayout {
     private Notification notification;
 
     @Autowired
-    public ProductGui(ProductRepository productRepository, ProductController productController) {
+    public ProductGui(ProductRepository productRepository, ProductService productService) {
 
         // ------ Setting up the visible part ------ //
         gridProducts = new Grid<>(Product.class);
-        gridProducts.setItems(productController.getProducts());
+        gridProducts.setItems(productService.getProducts());
         gridProducts.setColumns("id", "name", "min", "quantity", "productUnit", "calories");
 
 
@@ -110,10 +110,10 @@ public class ProductGui extends VerticalLayout {
                     } else {
                         Product product = new Product(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue(), DEFAULT_CALORIES_AMOUNT);
 
-                        ProductResponseData productResponseData = parsingService.parseTranslator(product.getName());
-                        ProductTypeResponseData productIdResponseData = parsingService.parseProductIdByName(productResponseData.getResponseData().getTranslatedText());
+                        ProductResponseData productResponseData = jsonParsingService.parseTranslator(product.getName());
+                        ProductTypeResponseData productIdResponseData = jsonParsingService.parseProductIdByName(productResponseData.getResponseData().getTranslatedText());
                         if(!productIdResponseData.getProducts().isEmpty() && productIdResponseData.getProducts().get(0).getId() != null) {
-                            ProductInformationResponseData productNutritionResponseData = parsingService.parseProductKcalById(productIdResponseData.getProducts().get(0).getId());
+                            ProductInformationResponseData productNutritionResponseData = jsonParsingService.parseProductKcalById(productIdResponseData.getProducts().get(0).getId());
 
                             for (int i = 0; i < productNutritionResponseData.getNutrition().getNutrients().size(); i++) {
                                 if (productNutritionResponseData.getNutrition().getNutrients().get(i).getName().equals(NAME_OF_SEARCHING_OBJECT)) {
@@ -122,9 +122,9 @@ public class ProductGui extends VerticalLayout {
                             }
                         }
 
-                        productController.addNewProduct(product);
+                        productService.addNewProduct(product);
 
-                        gridProducts.setItems(productController.getProducts());
+                        gridProducts.setItems(productService.getProducts());
 
                         notification = new Notification("Product \"" + convertedName + "\" added!", 3000);
                         notification.open();
@@ -187,9 +187,9 @@ public class ProductGui extends VerticalLayout {
                         }
                         Product oldProduct = productRepository.getById(integerFieldEditID.getValue().longValue());
                         Product product = new Product(convertedName, numberFieldEditMin.getValue(), numberFieldEditQuantity.getValue(), comboBoxEditUnit.getValue(), oldProduct.getCalories());
-                        productController.updateProduct(integerFieldEditID.getValue().longValue(), product);
+                        productService.updateProduct(integerFieldEditID.getValue().longValue(), product);
 
-                        gridProducts.setItems(productController.getProducts());
+                        gridProducts.setItems(productService.getProducts());
 
                         notification = new Notification("Product with ID: '" + integerFieldEditID.getValue() + "' has been changed!", 3000);
                         notification.open();
@@ -256,9 +256,9 @@ public class ProductGui extends VerticalLayout {
                             notification = new Notification("Product with this ID: '" + integerFieldDeleteID.getValue() + "' doesn't exists!", 3000);
                             notification.open();
                         } else {
-                            productController.deleteProduct(integerFieldDeleteID.getValue().longValue());
+                            productService.deleteProduct(integerFieldDeleteID.getValue().longValue());
 
-                            gridProducts.setItems(productController.getProducts());
+                            gridProducts.setItems(productService.getProducts());
 
                             notification = new Notification("Product with this ID: '" + integerFieldDeleteID.getValue() + "' has been deleted!", 3000);
                             notification.open();
@@ -275,9 +275,9 @@ public class ProductGui extends VerticalLayout {
                         notification = new Notification("You have to confirm your choice!", 3000);
                         notification.open();
                     } else {
-                        productController.deleteAllProducts();
+                        productService.deleteAllProducts();
 
-                        gridProducts.setItems(productController.getProducts());
+                        gridProducts.setItems(productService.getProducts());
 
                         notification = new Notification("All products have been deleted!", 3000);
                         notification.open();
