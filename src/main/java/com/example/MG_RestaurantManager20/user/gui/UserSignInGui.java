@@ -4,6 +4,7 @@ import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -17,7 +18,7 @@ import com.vaadin.flow.router.RouterLink;
 
 import java.util.Optional;
 
-@Route("Sign In")
+@Route("Sign_In")
 @PageTitle("Sign In")
 public class UserSignInGui extends Composite {
 
@@ -64,8 +65,7 @@ public class UserSignInGui extends Composite {
                 Notification.show("Wrong credentials.");
             }
             else
-                // TODO instead notification it should be redirection to main page of the account
-                Notification.show("Sign In succeeded! Welcome " + user.getClass().getName());
+                UI.getCurrent().navigate(UserMainMenu.class);
         }
     }
 }
