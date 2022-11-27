@@ -25,7 +25,7 @@ public class EmployeeController {
 
     // get employee
     @GetMapping("/employee/{employeeId}")
-    public Optional<Employee> getEmployee(@PathVariable("employeeId") Long employeeId) { return employeeService.getEmployee(employeeId); }
+    public Optional<Employee> getEmployee(@PathVariable("employeeId") Long employeeId) { return employeeService.getEmployeeById(employeeId); }
 
     // edit employee
     @PutMapping("employee/{employeeId}")

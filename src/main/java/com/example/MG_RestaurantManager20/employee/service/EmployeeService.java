@@ -14,9 +14,9 @@ public interface EmployeeService {
 
     List<Employee> getAllEmployees();
 
-    Optional<Employee> getEmployee(Long employeeId);
+    Optional<Employee> getEmployeeById(Long employeeId);
 
-    Optional<Employee> findProductByEmail(String email);
+    Optional<Employee> getEmployeeByEmail(String email);
 
     Employee updateEmployee(Long employeeId, Employee employee);
 

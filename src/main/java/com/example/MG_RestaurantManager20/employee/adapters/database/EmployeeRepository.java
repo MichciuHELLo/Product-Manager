@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.email = ?1")
-    Optional<Employee> findProductByEmail(String email);
+    Optional<Employee> getEmployeeByEmail(String email);
 
     @Modifying
     @Query("update Employee e set e.firstName = ?1, e.surname = ?2, e.email = ?3 where e.id = ?4")
