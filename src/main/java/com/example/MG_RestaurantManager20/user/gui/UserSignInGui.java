@@ -1,11 +1,13 @@
 package com.example.MG_RestaurantManager20.user.gui;
 
 import com.example.MG_RestaurantManager20.user.domain.User;
+import com.example.MG_RestaurantManager20.user.domain.UserRole;
 import com.example.MG_RestaurantManager20.user.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -33,6 +35,8 @@ public class UserSignInGui extends Composite {
 
         EmailField emailField = new EmailField("Email");
         PasswordField passwordField = new PasswordField("Password");
+        ComboBox<UserRole> roleComboBox = new ComboBox<>("Role");
+        roleComboBox.setItems(UserRole.ADMIN, UserRole.EMPLOYEE);
 
         emailField.setErrorMessage("Please enter a valid email address");
         emailField.setRequiredIndicatorVisible(true);
@@ -42,10 +46,12 @@ public class UserSignInGui extends Composite {
                 new H2("Sing In"),
                 emailField,
                 passwordField,
+                roleComboBox,
                 // TODO forgot password link should be added
                 new Button("Login", event -> signIn(
                         emailField.getValue(),
-                        passwordField.getValue()
+                        passwordField.getValue(),
+                        roleComboBox.getValue()
                 )),
                 new RouterLink("New account? Register", UserRegisterGui.class)
         );
@@ -54,18 +60,26 @@ public class UserSignInGui extends Composite {
         return verticalLayout;
     }
 
-    private void signIn(String emailField, String passwordField) {
+    private void signIn(String emailField, String passwordField, UserRole userRole) {
         if (emailField.trim().isEmpty())
             Notification.show("Enter your e-mail.");
         else if (passwordField.trim().isEmpty())
             Notification.show("Enter your password.");
+        else if (userRole == null){
+            Notification.show("Enter your role.");
+        }
         else {
-            Optional<User> user = userService.getUserByEmail(emailField);
-            if (user.isEmpty()){
-                Notification.show("Wrong credentials.");
+            if (userRole.equals(UserRole.ADMIN)){
+                Optional<User> user = userService.getUserByEmail(emailField);
+                if (user.isEmpty()){
+                    Notification.show("Wrong credentials.");
+                }
+                else
+                    UI.getCurrent().navigate(UserMainMenu.class);
             }
-            else
-                UI.getCurrent().navigate(UserMainMenu.class);
+            else {
+                Notification.show("Not implemented yet!");
+            }
         }
     }
 }
