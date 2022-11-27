@@ -29,28 +29,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<Employee> getEmployee(Long employeeId) {
+    public Optional<Employee> getEmployeeById(Long employeeId) {
         return employeeRepository.findById(employeeId);
     }
 
     @Override
-    public Optional<Employee> findProductByEmail(String email) {
-        return employeeRepository.findProductByEmail(email);
+    public Optional<Employee> getEmployeeByEmail(String email) {
+        return employeeRepository.getEmployeeByEmail(email);
     }
 
     @Override
     @Transactional
     public Employee updateEmployee(Long employeeId, Employee employee) {
-
         employeeRepository.findById(employeeId).orElseThrow(() -> {
             throw new IllegalStateException("Employee with this ID: '" + employeeId + "' doesn't exists.");
         });
-
         employeeRepository.updateEmployeeById(employee.getFirstName(), employee.getSurname(), employee.getEmail(), employeeId);
-
-        // TODO make an update
-        System.out.println("ZMIENIONE!");
-        System.out.printf("Employee: %d - %s %s %s%n", employeeId, employee.getFirstName(), employee.getSurname(), employee.getEmail());
         return employee;
     }
 

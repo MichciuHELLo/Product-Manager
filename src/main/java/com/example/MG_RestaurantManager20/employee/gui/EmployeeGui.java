@@ -107,7 +107,7 @@ public class EmployeeGui extends VerticalLayout {
             if (!(editor.getItem().getFirstName().equals(firstNameEditField.getValue()) && editor.getItem().getSurname().equals(surnameEditField.getValue()) && editor.getItem().getEmail().equals(emailEditField.getValue())
                     || firstNameEditField.getValue().isEmpty() || surnameEditField.getValue().isEmpty() || emailEditField.getValue().isEmpty())) {
                 if (!editor.getItem().getEmail().equals(emailEditField.getValue())) {
-                    if (employeeService.findProductByEmail(emailEditField.getValue()).isPresent()) {
+                    if (employeeService.getEmployeeByEmail(emailEditField.getValue()).isPresent()) {
                         Notification.show(String.format("Employee with this email: %s already exists", emailEditField.getValue()));
                     } else {
                         employeeService.updateEmployee(editor.getItem().getId(), new Employee(firstNameEditField.getValue(), surnameEditField.getValue(), emailEditField.getValue(), editor.getItem().getEmployeeSince()));

@@ -1,5 +1,8 @@
 package com.example.MG_RestaurantManager20.user.gui;
 
+import com.example.MG_RestaurantManager20.employee.domain.Employee;
+import com.example.MG_RestaurantManager20.employee.gui.EmployeeMainMenu;
+import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.domain.UserRole;
 import com.example.MG_RestaurantManager20.user.service.UserService;
@@ -25,9 +28,11 @@ import java.util.Optional;
 public class UserSignInGui extends Composite {
 
     private final UserService userService;
+    private final EmployeeService employeeService;
 
-    public UserSignInGui(UserService userService) {
+    public UserSignInGui(UserService userService, EmployeeService employeeService) {
         this.userService = userService;
+        this.employeeService = employeeService;
     }
 
     @Override
@@ -78,7 +83,18 @@ public class UserSignInGui extends Composite {
                     UI.getCurrent().navigate(UserMainMenu.class);
             }
             else {
-                Notification.show("Not implemented yet!");
+                Optional<Employee> employee = employeeService.getEmployeeByEmail(emailField);
+                if (employee.isEmpty()){
+                    Notification.show("Wrong credentials.");
+                }
+                else{
+                    if (employee.get().getTempFile()) {
+                        Notification.show("Not implemented yet.");
+                    }
+                    else {
+                        UI.getCurrent().navigate(EmployeeMainMenu.class);
+                    }
+                }
             }
         }
     }
