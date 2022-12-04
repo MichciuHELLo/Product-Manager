@@ -22,8 +22,7 @@ public class EmployeeMainMenu extends Composite {
         VerticalLayout verticalLayout = new VerticalLayout(
                 new H1("Employee main menu"),
                 new Button("Work", new Icon(VaadinIcon.WORKPLACE), event -> Notification.show("Not implemented yet!")),
-                new Button("Statistics", new Icon(VaadinIcon.CHART), event -> Notification.show("Not implemented yet!")),
-                new Button("Options", new Icon(VaadinIcon.COG), event -> Notification.show("Not implemented yet!"))
+                new Button("Statistics", new Icon(VaadinIcon.CHART), event -> Notification.show("Not implemented yet!"))
         );
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
