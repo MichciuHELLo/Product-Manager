@@ -86,7 +86,7 @@ public class RecipeGui extends VerticalLayout {
                 String convertedName = textFieldAddName.getValue().toLowerCase();
                 convertedName = convertedName.substring(0, 1).toUpperCase() + convertedName.toLowerCase().substring(1);
 
-                Optional<Recipe> recipeOptional = recipeRepository.findProductByName(convertedName);
+                Optional<Recipe> recipeOptional = recipeRepository.getRecipeByName(convertedName);
                 if (recipeOptional.isPresent()) {
                     notification = new Notification("Product \"" + convertedName + "\" already exists!", 3000);
                     notification.open();

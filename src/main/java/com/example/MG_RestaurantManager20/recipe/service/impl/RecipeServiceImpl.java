@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +19,15 @@ public class RecipeServiceImpl implements RecipeService {
 
     public List<Recipe> getAllRecipes() {
         return recipeRepository.findAll();
+    }
+
+    @Override
+    public Optional<Recipe> getRecipeByName(String recipeName) {
+        var recipe = recipeRepository.getRecipeByName(recipeName);
+        if (recipe.isEmpty())
+            throw new IllegalStateException("Recipe not found");
+
+        return recipe;
     }
 
     public void addNewRecipe(Recipe recipe) {
@@ -35,8 +45,8 @@ public class RecipeServiceImpl implements RecipeService {
     @Transactional
     public void addToRequiredProducts(String recipeName, ProductStructure productStructure) {
 
-        Recipe repoRecipe = recipeRepository.findProductByName(recipeName).orElseThrow(() -> {
-            throw new IllegalStateException("No such recipe in data base");
+        Recipe repoRecipe = recipeRepository.getRecipeByName(recipeName).orElseThrow(() -> {
+            throw new IllegalStateException("Recipe not found");
         });
 
 
