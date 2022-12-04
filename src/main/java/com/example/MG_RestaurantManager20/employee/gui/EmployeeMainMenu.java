@@ -2,6 +2,7 @@ package com.example.MG_RestaurantManager20.employee.gui;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
@@ -21,7 +22,7 @@ public class EmployeeMainMenu extends Composite {
 
         VerticalLayout verticalLayout = new VerticalLayout(
                 new H1("Employee main menu"),
-                new Button("Work", new Icon(VaadinIcon.WORKPLACE), event -> Notification.show("Not implemented yet!")),
+                new Button("Work", new Icon(VaadinIcon.WORKPLACE), event -> UI.getCurrent().navigate(EmployeeWorkGui.class)),
                 new Button("Statistics", new Icon(VaadinIcon.CHART), event -> Notification.show("Not implemented yet!"))
         );
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
