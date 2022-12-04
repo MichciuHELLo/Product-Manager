@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -20,7 +21,10 @@ public class RecipeController {
         return recipeService.getAllRecipes();
     }
 
-    @PutMapping("recipes/update/{recipeName")
+    @GetMapping("recipe/{recipeName}")
+    public Optional<Recipe> getRecipeByName(@PathVariable String recipeName) { return recipeService.getRecipeByName(recipeName);}
+
+    @PutMapping("recipes/update/{recipeName}")
     public void addToRequiredProducts(@PathVariable("recipeName") String recipeName, ProductStructure productStructure) {
         recipeService.addToRequiredProducts(recipeName, productStructure);
     }

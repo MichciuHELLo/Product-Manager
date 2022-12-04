@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT s FROM Recipe s WHERE s.name = ?1")
-    Optional<Recipe> findProductByName(String convertedName);
+    Optional<Recipe> getRecipeByName(String convertedName);
 
     @Modifying
     @Query("UPDATE Recipe s SET s.calories=:calories WHERE s.id=:id")
