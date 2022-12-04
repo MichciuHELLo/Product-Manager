@@ -20,6 +20,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.Optional;
 
@@ -92,6 +93,8 @@ public class UserSignInGui extends Composite {
                         Notification.show("Not implemented yet.");
                     }
                     else {
+                        VaadinSession session = VaadinSession.getCurrent();
+                        session.setAttribute(Employee.class, new Employee(emailField));
                         UI.getCurrent().navigate(EmployeeMainMenu.class);
                     }
                 }

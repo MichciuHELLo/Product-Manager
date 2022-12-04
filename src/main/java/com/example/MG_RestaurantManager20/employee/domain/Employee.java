@@ -46,4 +46,8 @@ public class Employee {
         this.email = email;
         this.employeeSince = employeeSince;
     }
+
+    public Employee(String email) {
+        this.email = email;
+    }
 }
