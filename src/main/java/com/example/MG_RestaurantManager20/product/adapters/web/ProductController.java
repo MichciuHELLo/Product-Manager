@@ -25,6 +25,11 @@ public class ProductController {
         return productService.getProduct(productId);
     }
 
+    @GetMapping("/product/name/{productName}")
+    public Optional<Product> getProductByName(@PathVariable("productName") String productName) {
+        return productService.getProductByName(productName);
+    }
+
     @PostMapping("products/add")
     public Product addNewProduct(@RequestBody Product product) {
         return productService.addNewProduct(product);

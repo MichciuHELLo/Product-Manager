@@ -1,5 +1,7 @@
 package com.example.MG_RestaurantManager20.employee.gui;
 
+import com.example.MG_RestaurantManager20.product.domain.Product;
+import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
 import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
 import com.vaadin.flow.component.button.Button;
@@ -14,15 +16,14 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Route("Work")
 @PageTitle("Work")
 public class EmployeeWorkGui extends VerticalLayout {
 
     private final RecipeService recipeService;
+    private final ProductService productService;
 
     private final Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
     private final Button orderButton = new Button("Place an order", new Icon(VaadinIcon.PLUS));
@@ -30,8 +31,9 @@ public class EmployeeWorkGui extends VerticalLayout {
 
     private Double counter = 0D;
 
-    public EmployeeWorkGui(RecipeService recipeService) {
+    public EmployeeWorkGui(RecipeService recipeService, ProductService productService) {
         this.recipeService = recipeService;
+        this.productService = productService;
 
         setSizeFull();
         configureGrid();
@@ -52,11 +54,34 @@ public class EmployeeWorkGui extends VerticalLayout {
             Button removeButton = new Button(new Icon(VaadinIcon.MINUS));
 
             addButton.addClickListener(event -> {
-                // TODO sprawdzić czy jest wystarczająca ilość produktów do zrobienia dania
                 counter = numberField.getValue();
                 counter++;
                 ordersMap.put(item.getName(), counter);
                 numberField.setValue(counter);
+
+                // TODO sprawdzić czy jest wystarczająca ilość produktów do zrobienia dania
+//                var recipe = recipeService.getRecipeByName(item.getName());
+//                if (recipe.isPresent()) {
+//                    var productIntegerMap = recipe.get().getProductsWithQuantity();
+//                    for (Map.Entry<Product, Integer> entry : productIntegerMap.entrySet()) {
+//                        System.out.println(entry.getKey() + ":" + entry.getValue());
+//                    }
+                boolean isEnough = checkProductQuantity(item.getName(), counter);
+                if (!isEnough) {
+                    addButton.setEnabled(false);
+                }
+//                    var productIntegerMap = recipe.get().getProductsWithQuantity();
+//                    var productsSet = productIntegerMap.keySet();
+//                    Iterator<Product> productIterator = productsSet.iterator();
+//                    while(productIterator.hasNext()) {
+//                        System.out.println(productIterator.next().getName());
+//                    }
+//                }
+//                else {
+//                    throw new IllegalStateException("Recipe not found");
+//                }
+
+
                 setEnabledRemoveButton(removeButton, counter);
                 System.out.printf("add: %d %s %s", item.getId(), item.getName(), item.getDescription());
                 System.out.println();
@@ -73,6 +98,11 @@ public class EmployeeWorkGui extends VerticalLayout {
                 System.out.println();
             });
 
+            boolean isEnough = checkProductQuantity(item.getName(), 1D);
+            if (!isEnough) {
+                addButton.setEnabled(false);
+            }
+
             HorizontalLayout v = new HorizontalLayout(numberField, addButton, removeButton);
             v.setSpacing(true);
 
@@ -82,20 +112,19 @@ public class EmployeeWorkGui extends VerticalLayout {
         orderButton.addClickListener(event -> {
             boolean moreThenZeroOrders = false;
             for (Double value : ordersMap.values()) {
-                if (value > 0){
+                if (value > 0) {
                     moreThenZeroOrders = true;
                     break;
                 }
             }
 
-            if (moreThenZeroOrders){
+            if (moreThenZeroOrders) {
                 // TODO odjąć wszystkie produkty z DB wchodzące w skład zamówionych potraw
                 Notification.show("You placed an order!");
                 System.out.println(ordersMap);
                 updateGrid();
                 configureMapOfOrders();
-            }
-            else {
+            } else {
                 Notification.show("You have to add at least one dish from the menu.");
             }
         });
@@ -128,4 +157,28 @@ public class EmployeeWorkGui extends VerticalLayout {
         removeButton.setEnabled(counter > 0);
     }
 
+    private boolean checkProductQuantity(String recipeName, double portions) {
+
+        // TODO przetestować
+
+        Optional<Recipe> recipe = recipeService.getRecipeByName(recipeName);
+        if (recipe.isPresent()){
+
+            // TODO mapa nie działa
+            var map = recipe.get().getProductsWithQuantity();
+            for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+                System.out.println(entry.getKey().getName() + ": " + entry.getValue());
+                Optional<Product> product = productService.getProductByName(entry.getKey().getName());
+                if (product.isPresent()) {
+                    System.out.println("if: " + product.get().getQuantity() + " >= " + entry.getValue() * portions);
+                    return product.get().getQuantity() >= entry.getValue() * portions;
+                } else {
+                    throw new IllegalStateException("Product not found");
+                }
+            }
+        } else {
+            throw new IllegalStateException("Recipe not found");
+        }
+        return false;
+    }
 }
