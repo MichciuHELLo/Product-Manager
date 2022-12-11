@@ -1,7 +1,7 @@
 package com.example.MG_RestaurantManager20.employee.gui;
 
-import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
-import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
+import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
+import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -22,15 +22,15 @@ import java.util.Map;
 @PageTitle("Work")
 public class EmployeeWorkGui extends VerticalLayout {
 
-    private final RecipeService recipeService;
+    private final RecipeService2 recipeService;
 
-    private final Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
+    private final Grid<Recipe2> recipeGrid = new Grid<>(Recipe2.class);
     private final Button orderButton = new Button("Place an order", new Icon(VaadinIcon.PLUS));
     private Map<String, Double> ordersMap = new HashMap<>();
 
     private Double counter = 0D;
 
-    public EmployeeWorkGui(RecipeService recipeService) {
+    public EmployeeWorkGui(RecipeService2 recipeService) {
         this.recipeService = recipeService;
 
         setSizeFull();
@@ -118,8 +118,8 @@ public class EmployeeWorkGui extends VerticalLayout {
     }
 
     private void configureMapOfOrders() {
-        List<Recipe> recipeList = recipeService.getAllRecipes();
-        for (Recipe recipe : recipeList) {
+        List<Recipe2> recipeList = recipeService.getAllRecipes();
+        for (Recipe2 recipe : recipeList) {
             ordersMap.put(recipe.getName(), 0D);
         }
     }
