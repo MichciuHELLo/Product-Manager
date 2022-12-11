@@ -2,7 +2,7 @@ package com.example.MG_RestaurantManager20.user.gui;
 
 import com.example.MG_RestaurantManager20.employee.gui.EmployeeGui;
 import com.example.MG_RestaurantManager20.product.gui.ProductGui;
-import com.example.MG_RestaurantManager20.recipe.gui.RecipeGui;
+import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
@@ -27,7 +27,7 @@ public class UserMainMenu extends Composite {
                 new H1("Main menu"),
                 new Button("Work", new Icon(VaadinIcon.WORKPLACE),event -> Notification.show("Not implemented yet!")),
                 new Button("Products", new Icon(VaadinIcon.PACKAGE), event -> UI.getCurrent().navigate(ProductGui.class)),
-                new Button("Recipes", new Icon(VaadinIcon.LIST), event -> UI.getCurrent().navigate(RecipeGui.class)),
+                new Button("Recipes", new Icon(VaadinIcon.LIST), event -> UI.getCurrent().navigate(RecipeGui2.class)),
                 new Button("Employees", new Icon(VaadinIcon.GROUP), event -> UI.getCurrent().navigate(EmployeeGui.class)),
                 new Button("Statistics", new Icon(VaadinIcon.CHART), event -> Notification.show("Not implemented yet!")),
                 new Button("Options", new Icon(VaadinIcon.COG), event -> Notification.show("Not implemented yet!"))
