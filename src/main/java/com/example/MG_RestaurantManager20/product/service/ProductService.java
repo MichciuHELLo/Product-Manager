@@ -11,6 +11,7 @@ public interface ProductService {
 
     List<Product> getProducts();
 
+    // TODO usunąć OPTIONAL
     Optional<Product> getProduct(Long productId);
 
     Product addNewProduct(Product product);
