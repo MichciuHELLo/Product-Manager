@@ -27,6 +27,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
@@ -110,14 +111,10 @@ public class RecipeGui2 extends VerticalLayout {
         Grid.Column<Recipe2> editColumn = recipeGrid.addComponentColumn(recipe -> {
             Button editButton = new Button("Edit");
             editButton.addClickListener(editClickEvent -> {
-                System.out.printf("Edit: %d %s %s " + recipe.getRequiredProducts() + recipe.getRequiredProducts(), recipe.getId(), recipe.getName(), recipe.getDescription());
-                System.out.println();
                 editor.editItem(recipe);
 
-
-
-// REQUIRED PRODUCTS SECTION
-                editProductsButton.addClickListener(q -> {
+    // REQUIRED PRODUCTS SECTION
+                editProductsButton.addClickListener(editProductsClickEvent -> {
                     // TODO zaimplementować edycje produktów wchodzących w skład przepisu
                     Notification.show("Not Implemented yet!!!");
 
@@ -134,6 +131,15 @@ public class RecipeGui2 extends VerticalLayout {
 
 
                     // TODO obsługa dodanie nowego required product
+                    addProductButton.addClickListener(addProductClickEvent -> {
+                       if (nameProductComboBox.isEmpty() || quantityProductNumberField.isEmpty()) {
+                           Notification.show("Fill all the fields to add new product to your recipe.");
+                       }
+                       else {
+                           requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), quantityProductNumberField.getValue());
+                           updateRequiredProductsGrid(recipe.getId());
+                       }
+                    });
 
                     // TODO co z edycją ?
 
@@ -154,10 +160,8 @@ public class RecipeGui2 extends VerticalLayout {
                         horizontalLayoutRecipe.setVisible(true);
                         updateRecipeGrid();
                     });
-
-
                 });
-// END OF REQUIRED PRODUCTS SECTION
+    // END OF REQUIRED PRODUCTS SECTION
 
 
             });
@@ -283,7 +287,8 @@ public class RecipeGui2 extends VerticalLayout {
         String text;
         if (selectedItems.size() == 1) {
             RequiredProducts requiredProduct = selectedItems.iterator().next();
-            text = String.format("You want to remove %s from your recipe! Are you sure?", requiredProduct.getName());
+            text = String.format("You want to remove %s from your recipe! Are you sure?", requiredProduct.getRequiredProductId());
+            Optional<Product> pr = productService.getProduct(requiredProduct.getRequiredProductId());
         } else {
             text = String.format("You want to delete %d products from your recipe! Are you sure?", selectedItems.size());
         }

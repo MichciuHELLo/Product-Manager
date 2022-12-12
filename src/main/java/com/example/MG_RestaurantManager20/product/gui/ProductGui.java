@@ -110,6 +110,7 @@ public class ProductGui extends VerticalLayout {
                     } else {
                         Product product = new Product(convertedName, numberFieldAddMin.getValue(), numberFieldAddQuantity.getValue(), comboBoxAddUnit.getValue(), DEFAULT_CALORIES_AMOUNT);
 
+                        // TODO usunąc translatora
                         ProductResponseData productResponseData = jsonParsingService.parseTranslator(product.getName());
                         ProductTypeResponseData productIdResponseData = jsonParsingService.parseProductIdByName(productResponseData.getResponseData().getTranslatedText());
                         if(!productIdResponseData.getProducts().isEmpty() && productIdResponseData.getProducts().get(0).getId() != null) {

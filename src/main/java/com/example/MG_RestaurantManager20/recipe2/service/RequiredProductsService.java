@@ -13,6 +13,8 @@ public interface RequiredProductsService {
 
     List<RequiredProducts> getAllRequiredProductsByRecipeId(Long recipeId);
 
+    RequiredProducts addRequiredProductToRecipe(Long recipeId, Long productId, Double quantity);
+
     void deleteSelectedRequiredProducts(Set<RequiredProducts> requiredProducts);
 
 }
