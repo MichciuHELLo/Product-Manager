@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
 
-
 @Route("RecipeGui2")
 @PageTitle("RecipeGui2")
 public class RecipeGui2 extends VerticalLayout {
@@ -106,64 +105,62 @@ public class RecipeGui2 extends VerticalLayout {
             }
         });
 
+// SHOW PRODUCTS
+        recipeGrid.addComponentColumn(recipe -> {
+            Button showProducts = new Button("Show Products");
+            showProducts.addClickListener(showProductsClickEvent -> {
+                // TODO zaimplementować edycje produktów wchodzących w skład przepisu
+                recipeGrid.setVisible(false);
+                horizontalLayoutRecipe.setVisible(false);
+
+                updateRequiredProductsGrid(recipe.getId());
+
+                requiredProductsGrid.addSelectionListener(selection -> deleteProductButton.setVisible(requiredProductsGrid.getSelectedItems().size() > 0));
+
+                requiredProductsGrid.setVisible(true);
+                horizontalLayoutProduct.setVisible(true);
+                returnButton.setVisible(true);
+
+                addProductButton.addClickListener(addProductClickEvent -> {
+                    if (nameProductComboBox.isEmpty() || quantityProductNumberField.isEmpty()) {
+                        Notification.show("Fill all the fields to add new product to your recipe.");
+                    }
+                    else {
+                        requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), quantityProductNumberField.getValue());
+                        updateRequiredProductsGrid(recipe.getId());
+                    }
+                });
+
+                deleteProductButton.addClickListener(deleteProductClickEvent -> {
+                    if (requiredProductsGrid.getSelectedItems().size() > 0) {
+                        Notification notification = createAcceptNotificationForProduct(requiredProductsGrid.getSelectedItems(), recipe.getId());
+                        notification.open();
+                    }
+                });
+
+                // TODO przesunąć ten guzik na prawo
+                // TODO jak jest za dużo produktów potrzebnych w przepisie to rozszerza się grid. Nawet jeśli się usunie produkty to za szeroki grid zostaje
+                returnButton.addClickListener(returnClickEvent -> {
+                    requiredProductsGrid.setVisible(false);
+                    horizontalLayoutProduct.setVisible(false);
+
+                    recipeGrid.setVisible(true);
+                    horizontalLayoutRecipe.setVisible(true);
+                    updateRecipeGrid();
+                });
+            });
+
+            return showProducts;
+        });
+// END SHOW PRODUCTS
+
+
 //EDIT
         Editor<Recipe2> editor = recipeGrid.getEditor();
         Grid.Column<Recipe2> editColumn = recipeGrid.addComponentColumn(recipe -> {
             Button editButton = new Button("Edit");
             editButton.addClickListener(editClickEvent -> {
                 editor.editItem(recipe);
-
-    // REQUIRED PRODUCTS SECTION
-                editProductsButton.addClickListener(editProductsClickEvent -> {
-                    // TODO zaimplementować edycje produktów wchodzących w skład przepisu
-                    Notification.show("Not Implemented yet!!!");
-
-                    recipeGrid.setVisible(false);
-                    horizontalLayoutRecipe.setVisible(false);
-
-                    updateRequiredProductsGrid(recipe.getId());
-
-                    requiredProductsGrid.addSelectionListener(selection -> deleteProductButton.setVisible(requiredProductsGrid.getSelectedItems().size() > 0));
-
-                    requiredProductsGrid.setVisible(true);
-                    horizontalLayoutProduct.setVisible(true);
-                    returnButton.setVisible(true);
-
-
-                    // TODO obsługa dodanie nowego required product
-                    addProductButton.addClickListener(addProductClickEvent -> {
-                       if (nameProductComboBox.isEmpty() || quantityProductNumberField.isEmpty()) {
-                           Notification.show("Fill all the fields to add new product to your recipe.");
-                       }
-                       else {
-                           requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), quantityProductNumberField.getValue());
-                           updateRequiredProductsGrid(recipe.getId());
-                       }
-                    });
-
-                    // TODO co z edycją ?
-
-                    deleteProductButton.addClickListener(deleteProductClickEvent -> {
-                        if (requiredProductsGrid.getSelectedItems().size() > 0) {
-                            Notification notification = createAcceptNotificationForProduct(requiredProductsGrid.getSelectedItems(), recipe.getId());
-                            notification.open();
-                        }
-                    });
-
-                    // TODO przesunąć ten guzik na prawo
-                    // TODO jak jest za dużo produktów potrzebnych w przepisie to rozszerza się grid. Nawet jeśli się usunie produkty to za szeroki grid zostaje
-                    returnButton.addClickListener(returnClickEvent -> {
-                        requiredProductsGrid.setVisible(false);
-                        horizontalLayoutProduct.setVisible(false);
-
-                        recipeGrid.setVisible(true);
-                        horizontalLayoutRecipe.setVisible(true);
-                        updateRecipeGrid();
-                    });
-                });
-    // END OF REQUIRED PRODUCTS SECTION
-
-
             });
             editButton.setEnabled(!editor.isOpen());
             return editButton;
@@ -174,7 +171,6 @@ public class RecipeGui2 extends VerticalLayout {
         createEditFields();
 
         Button saveButton = new Button("Save", e -> {
-            // TODO przetestować
             if (!(editor.getItem().getName().equals(nameEditField.getValue()) && editor.getItem().getDescription().equals(descriptionEditField.getValue())
                     || nameEditField.getValue().isEmpty() || descriptionEditField.getValue().isEmpty())) {
                 recipeService.updateRecipeById(editor.getItem().getId(), new Recipe2(nameEditField.getValue(), descriptionEditField.getValue(), editor.getItem().getRequiredProducts()));
@@ -195,17 +191,12 @@ public class RecipeGui2 extends VerticalLayout {
                 notification.open();
             }
         });
-
-
-
-
-
     }
 
     private void configureView() {
         recipeGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         recipeGrid.setSizeFull();
-        recipeGrid.setColumns("name", "description", "requiredProducts");
+        recipeGrid.setColumns("name", "description");
         recipeGrid.getColumns().forEach(col -> col.setAutoWidth(true));
         recipeGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
@@ -222,6 +213,8 @@ public class RecipeGui2 extends VerticalLayout {
 
         returnButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         returnButton.setVisible(false);
+
+        // TODO probem ze skalowaniem
     }
 
     private void configureGrid() {
@@ -334,8 +327,6 @@ public class RecipeGui2 extends VerticalLayout {
         recipeGrid.getColumnByKey("description").setEditorComponent(descriptionEditField);
 
         // TODO Jest rzucany błąd gdy klikniemy na dwa guziki tego rodzaju (editor jest pełny)
-        editProductsButton.setWidthFull();
-        recipeGrid.getColumnByKey("requiredProducts").setEditorComponent(editProductsButton);
     }
 
 }
