@@ -19,6 +19,8 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long user_fk;
+
     private String firstName;
 
     private String surname;

@@ -23,7 +23,6 @@ public class RequiredProducts {
 
     private Long recipe_fk;
 
-    // TODO zamiast name -> product_fk
     private Long product_fk;
 
     private String name;

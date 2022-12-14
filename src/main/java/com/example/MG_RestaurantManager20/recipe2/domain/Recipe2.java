@@ -18,7 +18,11 @@ public class Recipe2 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    private Long user_fk;
+
     private String name;
+
     private String description;
 
     @OneToMany(fetch = FetchType.EAGER, targetEntity = RequiredProducts.class, cascade = CascadeType.ALL)
