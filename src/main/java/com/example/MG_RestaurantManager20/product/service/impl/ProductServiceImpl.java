@@ -17,23 +17,22 @@ public class ProductServiceImpl implements ProductService {
 
     final private ProductRepository productRepository;
 
-    //    @Get
+    @Override
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
 
-    //    @Get
-    public Optional<Product> getProduct(Long productId) {
-        return productRepository.findById(productId);
+    @Override
+    public Product getProductById(Long productId) {
+        return productRepository.getById(productId);
     }
 
-    //    @Post
+    @Override
     public Product addNewProduct(Product product) {
         return productRepository.save(product);
     }
 
-
-    //    @Put
+    @Override
     @Transactional
     public Product updateProduct(Long productId, Product product) {
         Product oldProduct = productRepository.findById(productId).orElseThrow(() -> {
@@ -63,12 +62,12 @@ public class ProductServiceImpl implements ProductService {
         return oldProduct;
     }
 
-    //    @Delete
+    @Override
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
     }
 
-    //    @Delete
+    @Override
     public void deleteAllProducts() {
         productRepository.deleteAll();
     }

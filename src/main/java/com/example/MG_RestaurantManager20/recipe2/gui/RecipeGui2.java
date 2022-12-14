@@ -27,7 +27,6 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import java.util.Optional;
 import java.util.Set;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
@@ -281,7 +280,6 @@ public class RecipeGui2 extends VerticalLayout {
         if (selectedItems.size() == 1) {
             RequiredProducts requiredProduct = selectedItems.iterator().next();
             text = String.format("You want to remove %s from your recipe! Are you sure?", requiredProduct.getRequiredProductId());
-            Optional<Product> pr = productService.getProduct(requiredProduct.getRequiredProductId());
         } else {
             text = String.format("You want to delete %d products from your recipe! Are you sure?", selectedItems.size());
         }
