@@ -35,12 +35,9 @@ public class RecipeServiceImpl2 implements RecipeService2 {
     @Override
     @Transactional
     public Recipe2 updateRecipeById(long recipeId, Recipe2 recipe) {
-        /// TODO
-        System.out.println("NOT IMPLEMENTED YET! Tried to update " + recipeId);
         recipeRepository.findById(recipeId).orElseThrow(() -> {
             throw new IllegalStateException("Recipe with this ID: '" + recipeId + "' doesn't exists.");
         });
-//        recipeRepository.updateEmployeeById (recipe.getName(), recipe.getDescription(), recipe.getRequiredProducts(), recipeId);
         recipeRepository.updateEmployeeById (recipe.getName(), recipe.getDescription(), recipeId);
         return recipe;
     }

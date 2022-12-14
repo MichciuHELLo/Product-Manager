@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,9 +29,8 @@ public class RequiredProductsServiceImpl implements RequiredProductsService {
         List<RequiredProducts> requiredProducts = requiredProductsRepository.getAllRequiredProductsByRecipeId(recipeId);
 
         for (RequiredProducts requiredProduct : requiredProducts) {
-            // TODO usunąć OPTIONAL
-            Optional<Product> product = productService.getProduct(requiredProduct.getProduct_fk());
-            requiredProduct.setName(product.get().getName());
+            Product product = productService.getProductById(requiredProduct.getProduct_fk());
+            requiredProduct.setName(product.getName());
         }
 
         return requiredProducts;

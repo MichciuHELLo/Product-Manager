@@ -4,15 +4,13 @@ import com.example.MG_RestaurantManager20.product.domain.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface ProductService {
 
     List<Product> getProducts();
 
-    // TODO usunąć OPTIONAL
-    Optional<Product> getProduct(Long productId);
+    Product getProductById(Long productId);
 
     Product addNewProduct(Product product);
 

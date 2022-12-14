@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -21,27 +20,27 @@ public class ProductController {
     }
 
     @GetMapping("/products/{productId}")
-    public Optional<Product> getProduct(@PathVariable("productId") Long productId) {
-        return productService.getProduct(productId);
+    public Product getProductById(@PathVariable("productId") Long productId) {
+        return productService.getProductById(productId);
     }
 
-    @PostMapping("products/add")
+    @PostMapping("/products/add")
     public Product addNewProduct(@RequestBody Product product) {
         return productService.addNewProduct(product);
     }
 
-    @PutMapping("products/update/{productId}")
+    @PutMapping("/products/update/{productId}")
     public Product updateProduct(@PathVariable("productId") Long productId,
                                  @RequestBody Product product) {
         return productService.updateProduct(productId, product);
     }
 
-    @DeleteMapping("products/delete/{productId}")
+    @DeleteMapping("/products/delete/{productId}")
     public void deleteProduct(@PathVariable("productId") Long productId) {
         productService.deleteProduct(productId);
     }
 
-    @DeleteMapping("products/delete/all")
+    @DeleteMapping("/products/delete/all")
     public void deleteAllProducts() {
         productService.deleteAllProducts();
     }
