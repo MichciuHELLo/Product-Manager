@@ -1,5 +1,6 @@
 package com.example.MG_RestaurantManager20.user.gui;
 
+import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.gui.EmployeeMainMenu;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
@@ -20,7 +21,6 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.VaadinSession;
 
 import java.util.Optional;
 
@@ -29,10 +29,12 @@ import java.util.Optional;
 public class UserSignInGui extends Composite {
 
     private final UserService userService;
+    private final UserSession userSession;
     private final EmployeeService employeeService;
 
-    public UserSignInGui(UserService userService, EmployeeService employeeService) {
+    public UserSignInGui(UserService userService, UserSession userSession, EmployeeService employeeService) {
         this.userService = userService;
+        this.userSession = userSession;
         this.employeeService = employeeService;
     }
 
@@ -80,8 +82,10 @@ public class UserSignInGui extends Composite {
                 if (user.isEmpty()){
                     Notification.show("Wrong credentials.");
                 }
-                else
+                else {
+                    userSession.createNewSession(user.get().getId());
                     UI.getCurrent().navigate(UserMainMenu.class);
+                }
             }
             else {
                 Optional<Employee> employee = employeeService.getEmployeeByEmail(emailField);
@@ -93,8 +97,7 @@ public class UserSignInGui extends Composite {
                         Notification.show("Not implemented yet.");
                     }
                     else {
-                        VaadinSession session = VaadinSession.getCurrent();
-                        session.setAttribute(Employee.class, new Employee(emailField));
+                        userSession.createNewSession(employee.get().getId());
                         UI.getCurrent().navigate(EmployeeMainMenu.class);
                     }
                 }

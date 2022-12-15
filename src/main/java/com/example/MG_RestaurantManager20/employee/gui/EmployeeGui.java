@@ -1,5 +1,6 @@
 package com.example.MG_RestaurantManager20.employee.gui;
 
+import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.vaadin.flow.component.Text;
@@ -32,6 +33,8 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @PageTitle("Employees")
 public class EmployeeGui extends VerticalLayout {
 
+    private final UserSession userSession;
+
     private final EmployeeService employeeService;
 
     private final Grid<Employee> employeeGrid = new Grid<>(Employee.class);
@@ -50,7 +53,8 @@ public class EmployeeGui extends VerticalLayout {
     private final HorizontalLayout horizontalLayout =
             new HorizontalLayout(nameTextField, surnameTextField, emailField, addEmployeeButton, deleteEmployeeButton);
 
-    public EmployeeGui(EmployeeService employeeService) {
+    public EmployeeGui(UserSession userSession, EmployeeService employeeService) {
+        this.userSession = userSession;
         this.employeeService = employeeService;
 
         setSizeFull();
@@ -76,7 +80,7 @@ public class EmployeeGui extends VerticalLayout {
 
                     String tempPassword = UUID.randomUUID().toString().replaceAll("-", "");
                     employeeService.addNewEmployee(
-                            new Employee(name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
+                            new Employee(userSession.getUserSessionId(), name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
 
                     nameTextField.clear();
                     surnameTextField.clear();
@@ -151,7 +155,8 @@ public class EmployeeGui extends VerticalLayout {
     }
 
     private void updateGrid() {
-        employeeGrid.setItems(employeeService.getAllEmployees());
+//        employeeGrid.setItems(employeeService.getAllEmployees());
+        employeeGrid.setItems(employeeService.getEmployeesByUserSessionId(userSession.getUserSessionId()));
     }
 
     private Notification createAcceptNotification(Set<Employee> selectedItems) {

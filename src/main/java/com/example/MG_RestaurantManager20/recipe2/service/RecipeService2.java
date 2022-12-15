@@ -13,6 +13,8 @@ public interface RecipeService2 {
 
     Recipe2 getRecipeById(long recipeId);
 
+    List<Recipe2> getRecipesByUsersSessionId(Long recipeId);
+
     List<Recipe2> getAllRecipes();
 
     Recipe2 updateRecipeById(long recipeId, Recipe2 recipe);

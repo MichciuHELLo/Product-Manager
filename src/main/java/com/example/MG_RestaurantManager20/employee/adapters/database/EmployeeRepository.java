@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,6 +14,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.email = ?1")
     Optional<Employee> getEmployeeByEmail(String email);
+
+    @Query("SELECT e FROM Employee e WHERE e.user_fk = ?1")
+    List<Employee> getEmployeesByUserSessionId(Long userId);
 
     @Modifying
     @Query("update Employee e set e.firstName = ?1, e.surname = ?2, e.email = ?3 where e.id = ?4")
