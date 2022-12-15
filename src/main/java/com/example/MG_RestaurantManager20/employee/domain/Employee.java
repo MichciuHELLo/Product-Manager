@@ -33,7 +33,8 @@ public class Employee {
 
     private Boolean tempFile;
 
-    public Employee(String firstName, String surname, String email, LocalDate employeeSince, String password, Boolean tempFile) {
+    public Employee(Long user_fk, String firstName, String surname, String email, LocalDate employeeSince, String password, Boolean tempFile) {
+        this.user_fk = user_fk;
         this.firstName = firstName;
         this.surname = surname;
         this.email = email;
@@ -49,7 +50,7 @@ public class Employee {
         this.employeeSince = employeeSince;
     }
 
-    public Employee(String email) {
-        this.email = email;
+    public Employee(Long id) {
+        this.id = id;
     }
 }

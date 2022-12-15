@@ -1,5 +1,6 @@
 package com.example.MG_RestaurantManager20.recipe2.gui;
 
+import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
@@ -34,6 +35,9 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @Route("RecipeGui2")
 @PageTitle("RecipeGui2")
 public class RecipeGui2 extends VerticalLayout {
+
+//    private final Long usersSession = VaadinSession.getCurrent().getAttribute(User.class).getId();
+    private final UserSession userSession;
 
     private final RecipeService2 recipeService;
 
@@ -71,7 +75,8 @@ public class RecipeGui2 extends VerticalLayout {
     private final HorizontalLayout horizontalLayoutProduct =
             new HorizontalLayout(nameProductComboBox, quantityProductNumberField, addProductButton, deleteProductButton, returnButton);
 
-    public RecipeGui2(RecipeService2 recipeService, RequiredProductsService requiredProductsService, ProductService productService) {
+    public RecipeGui2(UserSession userSession, RecipeService2 recipeService, RequiredProductsService requiredProductsService, ProductService productService) {
+        this.userSession = userSession;
         this.recipeService = recipeService;
         this.requiredProductsService = requiredProductsService;
         this.productService = productService;
@@ -95,7 +100,7 @@ public class RecipeGui2 extends VerticalLayout {
                 String description = descriptionTextField.getValue();
                 description = description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase();
 
-                recipeService.addNewRecipe(new Recipe2(name, description));
+                recipeService.addNewRecipe(new Recipe2(userSession.getUserSessionId(), name, description));
 
                 nameTextField.clear();
                 descriptionTextField.clear();
@@ -228,7 +233,7 @@ public class RecipeGui2 extends VerticalLayout {
     }
 
     private void updateRecipeGrid() {
-        recipeGrid.setItems(recipeService.getAllRecipes());
+        recipeGrid.setItems(recipeService.getRecipesByUsersSessionId(userSession.getUserSessionId()));
     }
 
     private void updateRequiredProductsGrid(Long recipeId) {

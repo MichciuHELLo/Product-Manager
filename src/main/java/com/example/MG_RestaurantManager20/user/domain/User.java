@@ -44,4 +44,9 @@ public class User {
         this.password = password;
         this.userRole = userRole;
     }
+
+    public User(Long id) {
+        this.id = id;
+    }
+
 }

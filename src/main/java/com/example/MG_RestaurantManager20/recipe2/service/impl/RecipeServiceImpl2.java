@@ -28,6 +28,11 @@ public class RecipeServiceImpl2 implements RecipeService2 {
     }
 
     @Override
+    public List<Recipe2> getRecipesByUsersSessionId(Long recipeId) {
+        return recipeRepository.getRecipesByUsersSessionId(recipeId);
+    }
+
+    @Override
     public List<Recipe2> getAllRecipes() {
         return recipeRepository.findAll();
     }

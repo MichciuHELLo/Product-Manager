@@ -12,6 +12,8 @@ public interface EmployeeService {
 
     Employee addNewEmployee(Employee employee);
 
+    List<Employee> getEmployeesByUserSessionId(Long userId);
+
     List<Employee> getAllEmployees();
 
     Optional<Employee> getEmployeeById(Long employeeId);

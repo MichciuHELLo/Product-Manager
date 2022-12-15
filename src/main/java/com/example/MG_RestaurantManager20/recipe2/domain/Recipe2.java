@@ -29,7 +29,8 @@ public class Recipe2 {
     @JoinColumn(name = "recipe_fk", referencedColumnName = "id")
     private List<RequiredProducts> requiredProducts;
 
-    public Recipe2(String name, String description) {
+    public Recipe2(Long user_fk, String name, String description) {
+        this.user_fk = user_fk;
         this.name = name;
         this.description = description;
     }
