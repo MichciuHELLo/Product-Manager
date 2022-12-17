@@ -20,22 +20,30 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long user_fk;
+
     private String name;
     private Double min;
     private Double quantity;
     private ProductUnit productUnit;
-    private Double calories;
 
     @OneToMany(fetch = FetchType.EAGER, targetEntity = RequiredProducts.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_fk", referencedColumnName = "id")
     private List<RequiredProducts> requiredProducts;
 
-    public Product(String name, Double min, Double quantity, ProductUnit productUnit, Double calories) {
+    public Product(Long user_fk, String name, Double min, Double quantity, ProductUnit productUnit) {
+        this.user_fk = user_fk;
         this.name = name;
         this.min = min;
         this.quantity = quantity;
         this.productUnit = productUnit;
-        this.calories = calories;
+    }
+
+    public Product(String name, Double min, Double quantity, ProductUnit productUnit) {
+        this.name = name;
+        this.min = min;
+        this.quantity = quantity;
+        this.productUnit = productUnit;
     }
 
     public Product(Object object) {

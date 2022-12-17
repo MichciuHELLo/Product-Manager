@@ -10,6 +10,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +27,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(Long productId) {
         return productRepository.getById(productId);
+    }
+
+    @Override
+    public Optional<Product> getProductByNameAndUserSessionId(String name, Long userId) {
+        return productRepository.getProductByNameAndUserSessionId(name, userId);
+    }
+
+    @Override
+    public List<Product> getProductsByUserSessionId(Long userId) {
+        return productRepository.getProductsByUserSessionId(userId);
     }
 
     @Override
@@ -65,6 +77,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
+    }
+
+    @Override
+    public void deleteProducts(Set<Product> products) {
+        var idList = products.stream()
+                .map(Product::getId).collect(Collectors.toList());
+        productRepository.deleteAllById(idList);
     }
 
     @Override
