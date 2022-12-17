@@ -155,7 +155,6 @@ public class EmployeeGui extends VerticalLayout {
     }
 
     private void updateGrid() {
-//        employeeGrid.setItems(employeeService.getAllEmployees());
         employeeGrid.setItems(employeeService.getEmployeesByUserSessionId(userSession.getUserSessionId()));
     }
 

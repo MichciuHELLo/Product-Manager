@@ -1,6 +1,7 @@
 package com.example.MG_RestaurantManager20.user.domain;
 
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
+import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,10 @@ public class User {
     @OneToMany(targetEntity = Recipe2.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_fk", referencedColumnName = "id")
     private List<Recipe2> usersRecipes;
+
+    @OneToMany(targetEntity = Product.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_fk", referencedColumnName = "id")
+    private List<Product> usersProducts;
 
     public User(String name, String surname, String phoneNumber, String email, String password, UserRole userRole) {
         this.name = name;
