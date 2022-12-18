@@ -6,6 +6,7 @@ import com.example.MG_RestaurantManager20.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addNewUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String email, String newPassword) {
+        userRepository.changePassword(email, newPassword);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.MG_RestaurantManager20.user.gui;
 
-import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
-import com.example.MG_RestaurantManager20.employee.gui.EmployeeMainMenu;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.domain.UserRole;
@@ -20,63 +18,71 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLink;
 
 import java.util.Optional;
 
-@Route("Sign_In")
-@PageTitle("Sign In")
-public class UserSignInGui extends Composite {
+@Route("Change_password")
+@PageTitle("Change password")
+public class UserChangePasswordGui extends Composite {
 
     private final UserService userService;
-    private final UserSession userSession;
     private final EmployeeService employeeService;
 
-    public UserSignInGui(UserService userService, UserSession userSession, EmployeeService employeeService) {
+    public UserChangePasswordGui(UserService userService, EmployeeService employeeService) {
         this.userService = userService;
-        this.userSession = userSession;
         this.employeeService = employeeService;
     }
 
     @Override
     protected Component initContent() {
-
         EmailField emailField = new EmailField("Email");
-        PasswordField passwordField = new PasswordField("Password");
+        PasswordField currentPasswordField = new PasswordField("Current password");
+        PasswordField newPasswordField = new PasswordField("New password");
+        PasswordField newPasswordField2 = new PasswordField("Repeat new password");
         ComboBox<UserRole> roleComboBox = new ComboBox<>("Role");
         roleComboBox.setItems(UserRole.ADMIN, UserRole.EMPLOYEE);
 
         emailField.setErrorMessage("Please enter a valid email address");
         emailField.setRequiredIndicatorVisible(true);
-        passwordField.setRequired(true);
+        currentPasswordField.setRequired(true);
+        newPasswordField.setRequired(true);
+        newPasswordField2.setRequired(true);
+        roleComboBox.setRequired(true);
 
         VerticalLayout verticalLayout = new VerticalLayout(
-                new H2("Sing In"),
+                new H2("Change your password"),
                 emailField,
-                passwordField,
+                currentPasswordField,
+                newPasswordField,
+                newPasswordField2,
                 roleComboBox,
                 // TODO forgot password link should be added
-                new Button("Login", event -> signIn(
+                new Button("Change password", event -> changePassword(
                         emailField.getValue(),
-                        passwordField.getValue(),
+                        currentPasswordField.getValue(),
+                        newPasswordField.getValue(),
+                        newPasswordField2.getValue(),
                         roleComboBox.getValue()
-                )),
-                new RouterLink("Forgot password?", UserChangePasswordGui.class),
-                new RouterLink("New account? Register", UserRegisterGui.class)
+                ))
         );
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         return verticalLayout;
     }
 
-    private void signIn(String emailField, String passwordField, UserRole userRole) {
+    private void changePassword(String emailField, String currentPasswordField, String newPasswordField, String newPasswordField2, UserRole userRole) {
         if (emailField.trim().isEmpty())
             Notification.show("Enter your e-mail.");
-        else if (passwordField.trim().isEmpty())
+        else if (currentPasswordField.trim().isEmpty())
             Notification.show("Enter your password.");
-        else if (userRole == null){
+        else if (newPasswordField.trim().isEmpty())
+            Notification.show("Enter your new password.");
+        else if (newPasswordField2.trim().isEmpty())
+            Notification.show("Repeat new password.");
+        else if (userRole == null)
             Notification.show("Enter your role.");
-        }
+        else if (!newPasswordField.equals(newPasswordField2))
+            Notification.show("New passwords aren't the same.");
         else {
             if (userRole.equals(UserRole.ADMIN)){
                 Optional<User> user = userService.getUserByEmail(emailField);
@@ -84,9 +90,9 @@ public class UserSignInGui extends Composite {
                     Notification.show("Wrong credentials.");
                 }
                 else {
-                    if (user.get().getPassword().equals(passwordField)) {
-                        userSession.createNewSession(user.get().getId());
-                        UI.getCurrent().navigate(UserMainMenu.class);
+                    if (user.get().getPassword().equals(currentPasswordField)) {
+                        userService.changePassword(emailField, newPasswordField);
+                        UI.getCurrent().navigate(UserSignInGui.class);
                     }
                     else {
                         Notification.show("Wrong credentials.");
@@ -99,20 +105,16 @@ public class UserSignInGui extends Composite {
                     Notification.show("Wrong credentials.");
                 }
                 else{
-                    if (employee.get().getTempFile()) {
-                        UI.getCurrent().navigate(UserChangePasswordGui.class);
+                    if (employee.get().getPassword().equals(currentPasswordField)) {
+                        employeeService.changePassword(emailField, newPasswordField);
+                        UI.getCurrent().navigate(UserSignInGui.class);
                     }
                     else {
-                        if (employee.get().getPassword().equals(passwordField)) {
-                            userSession.createNewSession(employee.get().getId());
-                            UI.getCurrent().navigate(EmployeeMainMenu.class);
-                        }
-                        else {
-                            Notification.show("Wrong credentials.");
-                        }
+                        Notification.show("Wrong credentials.");
                     }
                 }
             }
         }
     }
+
 }
