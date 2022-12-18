@@ -14,6 +14,8 @@ public interface ProductService {
 
     Product getProductById(Long productId);
 
+    Product getProductByIdFetch(Long productId);
+
     Optional<Product> getProductByNameAndUserSessionId(String name, Long userId);
 
     List<Product> getProductsByUserSessionId(Long userId);

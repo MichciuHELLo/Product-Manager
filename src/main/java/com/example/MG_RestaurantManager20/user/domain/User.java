@@ -37,7 +37,7 @@ public class User {
     @JoinColumn(name = "user_fk", referencedColumnName = "id")
     private List<Recipe2> usersRecipes;
 
-    @OneToMany(targetEntity = Product.class, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, targetEntity = Product.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_fk", referencedColumnName = "id")
     private List<Product> usersProducts;
 

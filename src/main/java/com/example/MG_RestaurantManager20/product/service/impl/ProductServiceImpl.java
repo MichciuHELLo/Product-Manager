@@ -30,6 +30,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product getProductByIdFetch(Long productId) {
+        return productRepository.getProductByIdFetch(productId);
+    }
+
+    @Override
     public Optional<Product> getProductByNameAndUserSessionId(String name, Long userId) {
         return productRepository.getProductByNameAndUserSessionId(name, userId);
     }

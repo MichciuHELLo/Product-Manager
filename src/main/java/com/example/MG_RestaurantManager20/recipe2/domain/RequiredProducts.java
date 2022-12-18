@@ -29,9 +29,10 @@ public class RequiredProducts {
 
     private Double quantity;
 
-    public RequiredProducts(Long recipe_fk, Long product_fk, Double quantity) {
+    public RequiredProducts(Long recipe_fk, Long product_fk, String name, Double quantity) {
         this.recipe_fk = recipe_fk;
         this.product_fk = product_fk;
+        this.name = name;
         this.quantity = quantity;
     }
 }
