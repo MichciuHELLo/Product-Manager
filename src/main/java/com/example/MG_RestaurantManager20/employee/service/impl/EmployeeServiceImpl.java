@@ -54,6 +54,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
+    public void changePassword(String email, String newPassword) {
+        employeeRepository.changePassword(email, newPassword);
+    }
+
+    @Override
     public void deleteEmployee(Long employeeId) {
         employeeRepository.deleteById(employeeId);
     }

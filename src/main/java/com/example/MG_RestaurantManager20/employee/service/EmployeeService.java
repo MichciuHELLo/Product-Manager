@@ -22,6 +22,8 @@ public interface EmployeeService {
 
     Employee updateEmployee(Long employeeId, Employee employee);
 
+    void changePassword(String email, String newPassword);
+
     void deleteEmployee(Long employeeId);
 
     void deleteAllEmployee();
