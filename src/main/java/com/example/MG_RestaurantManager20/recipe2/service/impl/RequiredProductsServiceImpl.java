@@ -1,7 +1,5 @@
 package com.example.MG_RestaurantManager20.recipe2.service.impl;
 
-import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.adapters.database.RequiredProductsRepository;
 import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
 import com.example.MG_RestaurantManager20.recipe2.service.RequiredProductsService;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 public class RequiredProductsServiceImpl implements RequiredProductsService {
 
     final private RequiredProductsRepository requiredProductsRepository;
-    final private ProductService productService;
 
     @Override
     public List<RequiredProducts> getAllRequiredProducts() {
@@ -26,19 +23,12 @@ public class RequiredProductsServiceImpl implements RequiredProductsService {
 
     @Override
     public List<RequiredProducts> getAllRequiredProductsByRecipeId(Long recipeId) {
-        List<RequiredProducts> requiredProducts = requiredProductsRepository.getAllRequiredProductsByRecipeId(recipeId);
-
-        for (RequiredProducts requiredProduct : requiredProducts) {
-            Product product = productService.getProductById(requiredProduct.getProduct_fk());
-            requiredProduct.setName(product.getName());
-        }
-
-        return requiredProducts;
+        return requiredProductsRepository.getAllRequiredProductsByRecipeId(recipeId);
     }
 
     @Override
-    public RequiredProducts addRequiredProductToRecipe(Long recipeId, Long productId, Double quantity) {
-        return requiredProductsRepository.save(new RequiredProducts(recipeId, productId, quantity));
+    public RequiredProducts addRequiredProductToRecipe(Long recipeId, Long productId, String name, Double quantity) {
+        return requiredProductsRepository.save(new RequiredProducts(recipeId, productId, name, quantity));
     }
 
     @Override

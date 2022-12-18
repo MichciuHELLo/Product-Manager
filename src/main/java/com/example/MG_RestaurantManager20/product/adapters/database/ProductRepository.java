@@ -20,4 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.user_fk = ?1")
     List<Product> getProductsByUserSessionId(Long userId);
 
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.requiredProducts WHERE p.id = ?1")
+    Product getProductByIdFetch(Long productId);
+
 }

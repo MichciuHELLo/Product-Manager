@@ -36,7 +36,6 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @PageTitle("RecipeGui2")
 public class RecipeGui2 extends VerticalLayout {
 
-//    private final Long usersSession = VaadinSession.getCurrent().getAttribute(User.class).getId();
     private final UserSession userSession;
 
     private final RecipeService2 recipeService;
@@ -130,7 +129,7 @@ public class RecipeGui2 extends VerticalLayout {
                         Notification.show("Fill all the fields to add new product to your recipe.");
                     }
                     else {
-                        requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), quantityProductNumberField.getValue());
+                        requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(),nameProductComboBox.getValue().getName(), quantityProductNumberField.getValue());
                         updateRequiredProductsGrid(recipe.getId());
                     }
                 });
