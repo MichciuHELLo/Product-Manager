@@ -3,6 +3,7 @@ package com.example.MG_RestaurantManager20.employee.gui;
 import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
+import com.example.MG_RestaurantManager20.mail.service.EmailService;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -36,6 +37,9 @@ public class EmployeeGui extends VerticalLayout {
     private final UserSession userSession;
 
     private final EmployeeService employeeService;
+    private final EmailService emailService;
+
+    private final String EMAIL_MESSAGE = "Hi!\n\nRestaurant manager here. Your boss added you as a employee.\n\nHere's your temporary password: %s\nUse it to login to your new account!";
 
     private final Grid<Employee> employeeGrid = new Grid<>(Employee.class);
     private final TextField nameTextField = new TextField("Name");
@@ -53,9 +57,10 @@ public class EmployeeGui extends VerticalLayout {
     private final HorizontalLayout horizontalLayout =
             new HorizontalLayout(nameTextField, surnameTextField, emailField, addEmployeeButton, deleteEmployeeButton);
 
-    public EmployeeGui(UserSession userSession, EmployeeService employeeService) {
+    public EmployeeGui(UserSession userSession, EmployeeService employeeService, EmailService emailService) {
         this.userSession = userSession;
         this.employeeService = employeeService;
+        this.emailService = emailService;
 
         setSizeFull();
         configureGrid();
@@ -81,6 +86,8 @@ public class EmployeeGui extends VerticalLayout {
                     String tempPassword = UUID.randomUUID().toString().replaceAll("-", "");
                     employeeService.addNewEmployee(
                             new Employee(userSession.getUserSessionId(), name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
+
+                    emailService.sendEmail(emailField.getValue(), String.format(EMAIL_MESSAGE, tempPassword));
 
                     nameTextField.clear();
                     surnameTextField.clear();
