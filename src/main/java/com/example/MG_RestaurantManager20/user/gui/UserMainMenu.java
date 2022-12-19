@@ -11,7 +11,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -32,12 +31,9 @@ public class UserMainMenu extends Composite {
         if (userSession.checkIfAuthenticated()) {
             VerticalLayout verticalLayout = new VerticalLayout(
                     new H1("Main menu"),
-                    new Button("Work", new Icon(VaadinIcon.WORKPLACE),event -> Notification.show("Not implemented yet!")),
                     new Button("Products", new Icon(VaadinIcon.PACKAGE), event -> UI.getCurrent().navigate(ProductGui.class)),
                     new Button("Recipes", new Icon(VaadinIcon.LIST), event -> UI.getCurrent().navigate(RecipeGui2.class)),
-                    new Button("Employees", new Icon(VaadinIcon.GROUP), event -> UI.getCurrent().navigate(EmployeeGui.class)),
-                    new Button("Statistics", new Icon(VaadinIcon.CHART), event -> Notification.show("Not implemented yet!")),
-                    new Button("Options", new Icon(VaadinIcon.COG), event -> Notification.show("Not implemented yet!"))
+                    new Button("Employees", new Icon(VaadinIcon.GROUP), event -> UI.getCurrent().navigate(EmployeeGui.class))
             );
             verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
