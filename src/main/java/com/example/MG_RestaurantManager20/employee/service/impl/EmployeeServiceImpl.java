@@ -4,11 +4,13 @@ import com.example.MG_RestaurantManager20.employee.adapters.database.EmployeeRep
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,7 +58,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void changePassword(String email, String newPassword) {
-        employeeRepository.changePassword(email, newPassword);
+        String passwordSalt = new Random().ints(97, 122 + 1)
+                .limit(32)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        String passwordHash = DigestUtils.sha1Hex(newPassword + passwordSalt);
+        employeeRepository.changePassword(email, passwordHash, passwordSalt);
     }
 
     @Override

@@ -23,7 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     void updateEmployeeById(String firstname, String surname, String email, Long employeeId);
 
     @Modifying
-    @Query("UPDATE Employee e SET e.password = ?2, e.tempFile = false WHERE e.email = ?1")
-    void changePassword(String email, String newPassword);
+    @Query("UPDATE Employee e SET e.passwordHash = ?2, e.passwordSalt = ?3, e.tempFile = false WHERE e.email = ?1")
+    void changePassword(String email, String newPassword, String passwordSalt);
 
 }
