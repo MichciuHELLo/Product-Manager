@@ -90,9 +90,10 @@ public class UserChangePasswordGui extends Composite {
                     Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else {
-                    if (user.get().getPassword().equals(currentPasswordField)) {
+                    if (user.get().checkPassword(currentPasswordField)) {
                         userService.changePassword(emailField, newPasswordField);
                         UI.getCurrent().navigate(UserSignInGui.class);
+                        Notification.show("Password changed.").setPosition(Notification.Position.BOTTOM_CENTER);
                     }
                     else {
                         Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);

@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Random;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +28,11 @@ public class User {
     private String surname;
     private String phoneNumber;
     private String email;
-    private String password;
+
+    private String passwordSalt;
+    private String passwordHash;
+
+
     private UserRole userRole;
 
     @OneToMany(targetEntity = Employee.class, cascade = CascadeType.ALL)
@@ -46,8 +52,17 @@ public class User {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.password = password;
         this.userRole = userRole;
+
+        this.passwordSalt = new Random().ints(97, 122 + 1)
+                .limit(32)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        this.passwordHash = DigestUtils.sha1Hex(password + passwordSalt);
+    }
+
+    public boolean checkPassword(String password) {
+        return DigestUtils.sha1Hex(password + passwordSalt).equals(passwordHash);
     }
 
     public User(Long id) {
