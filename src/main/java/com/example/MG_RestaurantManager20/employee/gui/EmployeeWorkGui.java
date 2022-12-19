@@ -4,15 +4,21 @@ import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.product.domain.Product;
+import com.example.MG_RestaurantManager20.product.gui.ProductGui;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
 import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
 import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
+import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -21,6 +27,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +39,17 @@ import java.util.Optional;
 public class EmployeeWorkGui extends VerticalLayout {
 
     private final UserSession userSession;
+
+    private final StreamResource imageResource = new StreamResource("RMMG_logo.png", () -> getClass().getResourceAsStream("/images/RMMG_logo.png"));
+    private final Image logoImage = new Image(imageResource, "My RMMG logo");
+    private final HorizontalLayout headerLogo = new HorizontalLayout(logoImage);
+
+    private final HorizontalLayout headerButtons = new HorizontalLayout();
+
+    private final Button logOutButton = new Button("Log out", new Icon(VaadinIcon.SIGN_OUT));
+    private final HorizontalLayout headerLogOut = new HorizontalLayout(logOutButton);
+
+    private final HorizontalLayout header = new HorizontalLayout(headerLogo, headerButtons, headerLogOut);
 
     private final RecipeService2 recipeService;
     private final ProductService productService;
@@ -56,8 +74,14 @@ public class EmployeeWorkGui extends VerticalLayout {
             configureGrid();
             configureView();
 
-            add(recipeGrid, orderButton);
+            H3 h3 = new H3("Work");
+            add(header, h3, recipeGrid, orderButton);
             updateGrid();
+
+            logOutButton.addClickListener(logoImageClickEvent -> {
+                userSession.removeCurrentSession();
+                UI.getCurrent().navigate(UserSignInGui.class);
+            });
 
             configureMapOfOrders();
 
@@ -115,6 +139,7 @@ public class EmployeeWorkGui extends VerticalLayout {
                             productService.updateProduct(product.getId(), product);
                         }
                     }
+                    // TODO Wysyłka maila jeśli stan produków zszedł poniżej minimum
                     Notification.show("You placed an order!").setPosition(Notification.Position.BOTTOM_CENTER);
                     updateGrid();
                     configureMapOfOrders();
@@ -137,6 +162,13 @@ public class EmployeeWorkGui extends VerticalLayout {
     }
 
     private void configureView() {
+        header.setWidthFull();
+        headerButtons.setWidthFull();
+        headerButtons.setJustifyContentMode(JustifyContentMode.START);
+        headerButtons.setSpacing(true);
+
+        logOutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         orderButton.setWidthFull();
     }
 

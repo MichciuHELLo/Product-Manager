@@ -4,6 +4,9 @@ import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.mail.service.EmailService;
+import com.example.MG_RestaurantManager20.product.gui.ProductGui;
+import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
+import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -13,6 +16,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -25,6 +30,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -37,6 +43,20 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 public class EmployeeGui extends VerticalLayout {
 
     private final UserSession userSession;
+
+    private final StreamResource imageResource = new StreamResource("RMMG_logo.png", () -> getClass().getResourceAsStream("/images/RMMG_logo.png"));
+    private final Image logoImage = new Image(imageResource, "My RMMG logo");
+    private final HorizontalLayout headerLogo = new HorizontalLayout(logoImage);
+
+    private final Button recipesButton = new Button("Recipes", new Icon(VaadinIcon.LIST));
+    private final Button productsButton = new Button("Products", new Icon(VaadinIcon.PACKAGE));
+    private final Button employeesButton = new Button("Employees", new Icon(VaadinIcon.GROUP));
+    private final HorizontalLayout headerButtons = new HorizontalLayout(recipesButton, productsButton, employeesButton);
+
+    private final Button logOutButton = new Button("Log out", new Icon(VaadinIcon.SIGN_OUT));
+    private final HorizontalLayout headerLogOut = new HorizontalLayout(logOutButton);
+
+    private final HorizontalLayout header = new HorizontalLayout(headerLogo, headerButtons, headerLogOut);
 
     private final EmployeeService employeeService;
     private final EmailService emailService;
@@ -69,8 +89,18 @@ public class EmployeeGui extends VerticalLayout {
             configureGrid();
             configureView();
 
-            add(employeeGrid, horizontalLayout);
+            H3 h3 = new H3("Your employees");
+            add(header, h3, employeeGrid, horizontalLayout);
             updateGrid();
+
+            logoImage.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(UserMainMenu.class));
+            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui2.class));
+            productsButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(ProductGui.class));
+            employeesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(EmployeeGui.class));
+            logOutButton.addClickListener(logoImageClickEvent -> {
+                userSession.removeCurrentSession();
+                UI.getCurrent().navigate(UserSignInGui.class);
+            });
 
             employeeGrid.addSelectionListener(selection -> deleteEmployeeButton.setVisible(employeeGrid.getSelectedItems().size() > 0));
 
@@ -163,6 +193,14 @@ public class EmployeeGui extends VerticalLayout {
     }
 
     private void configureView() {
+        header.setWidthFull();
+        headerButtons.setWidthFull();
+        headerButtons.setJustifyContentMode(JustifyContentMode.START);
+        headerButtons.setSpacing(true);
+
+        employeesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        logOutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         horizontalLayout.setWidthFull();
         emailField.setErrorMessage("Please enter a valid email address");
         emailField.setRequiredIndicatorVisible(true);
