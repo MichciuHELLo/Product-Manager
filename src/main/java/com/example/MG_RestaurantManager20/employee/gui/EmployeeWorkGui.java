@@ -4,13 +4,10 @@ import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.product.domain.Product;
-import com.example.MG_RestaurantManager20.product.gui.ProductGui;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
 import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
-import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
 import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
-import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -69,7 +66,7 @@ public class EmployeeWorkGui extends VerticalLayout {
 
 //        checkAuthorization();
 
-        if (userSession.checkIfAuthenticated()) {
+        if (userSession.checkIfAuthenticatedEmployee()) {
             setSizeFull();
             configureGrid();
             configureView();
@@ -148,6 +145,7 @@ public class EmployeeWorkGui extends VerticalLayout {
                 }
             });
         } else {
+            userSession.removeCurrentSession();
             UI.getCurrent().navigate(UserSignInGui.class);
             UI.getCurrent().getPage().reload();
         }

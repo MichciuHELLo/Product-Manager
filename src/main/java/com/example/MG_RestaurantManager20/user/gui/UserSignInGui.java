@@ -84,7 +84,7 @@ public class UserSignInGui extends Composite {
                 }
                 else {
                     if (user.get().checkPassword(passwordField)) {
-                        userSession.createNewSession(user.get().getId());
+                        userSession.createNewSession(user.get().getId(), UserRole.ADMIN);
                         UI.getCurrent().navigate(UserMainMenu.class);
                     }
                     else {
@@ -103,7 +103,7 @@ public class UserSignInGui extends Composite {
                     }
                     else {
                         if (employee.get().getPassword().equals(passwordField)) {
-                            userSession.createNewSession(employee.get().getId());
+                            userSession.createNewSession(employee.get().getId(), UserRole.EMPLOYEE);
                             UI.getCurrent().navigate(EmployeeWorkGui.class);
                         }
                         else {

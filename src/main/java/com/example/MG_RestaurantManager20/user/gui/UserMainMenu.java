@@ -38,7 +38,7 @@ public class UserMainMenu extends Composite {
 
     @Override
     protected Component initContent() {
-        if (userSession.checkIfAuthenticated()) {
+        if (userSession.checkIfAuthenticatedAdmin()) {
 
             configureView();
 
@@ -58,6 +58,7 @@ public class UserMainMenu extends Composite {
 
             return new VerticalLayout(header, verticalLayout);
         } else {
+            userSession.removeCurrentSession();
             UI.getCurrent().navigate(UserSignInGui.class);
             UI.getCurrent().getPage().reload();
             return new VerticalLayout();
