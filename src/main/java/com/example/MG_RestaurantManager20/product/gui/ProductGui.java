@@ -1,9 +1,12 @@
 package com.example.MG_RestaurantManager20.product.gui;
 
 import com.example.MG_RestaurantManager20.auth.UserSession;
+import com.example.MG_RestaurantManager20.employee.gui.EmployeeGui;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
+import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
+import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -14,6 +17,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -26,6 +31,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
@@ -38,6 +44,20 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 public class ProductGui extends VerticalLayout {
 
     private final UserSession userSession;
+
+    private final StreamResource imageResource = new StreamResource("RMMG_logo.png", () -> getClass().getResourceAsStream("/images/RMMG_logo.png"));
+    private final Image logoImage = new Image(imageResource, "My RMMG logo");
+    private final HorizontalLayout headerLogo = new HorizontalLayout(logoImage);
+
+    private final Button recipesButton = new Button("Recipes", new Icon(VaadinIcon.LIST));
+    private final Button productsButton = new Button("Products", new Icon(VaadinIcon.PACKAGE));
+    private final Button employeesButton = new Button("Employees", new Icon(VaadinIcon.GROUP));
+    private final HorizontalLayout headerButtons = new HorizontalLayout(recipesButton, productsButton, employeesButton);
+
+    private final Button logOutButton = new Button("Log out", new Icon(VaadinIcon.SIGN_OUT));
+    private final HorizontalLayout headerLogOut = new HorizontalLayout(logOutButton);
+
+    private final HorizontalLayout header = new HorizontalLayout(headerLogo, headerButtons, headerLogOut);
 
     private final ProductService productService;
     private final Binder<Product> binder = new Binder<>(Product.class);
@@ -67,8 +87,18 @@ public class ProductGui extends VerticalLayout {
             configureGrid();
             configureView();
 
-            add(productGrid, horizontalLayout);
+            H3 h3 = new H3("Your products");
+            add(header, h3, productGrid, horizontalLayout);
             updateGrid();
+
+            logoImage.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(UserMainMenu.class));
+            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui2.class));
+            productsButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(ProductGui.class));
+            employeesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(EmployeeGui.class));
+            logOutButton.addClickListener(logoImageClickEvent -> {
+                userSession.removeCurrentSession();
+                UI.getCurrent().navigate(UserSignInGui.class);
+            });
 
             productGrid.addSelectionListener(selection -> deleteProductButton.setVisible(productGrid.getSelectedItems().size() > 0));
 
@@ -154,6 +184,14 @@ public class ProductGui extends VerticalLayout {
     }
 
     private void configureView() {
+        header.setWidthFull();
+        headerButtons.setWidthFull();
+        headerButtons.setJustifyContentMode(JustifyContentMode.START);
+        headerButtons.setSpacing(true);
+
+        productsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        logOutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         horizontalLayout.setWidthFull();
 
         minNumberField.setMin(0D);

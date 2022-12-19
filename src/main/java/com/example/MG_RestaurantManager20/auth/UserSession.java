@@ -25,4 +25,9 @@ public class UserSession {
         return (Long) sessionAttribute;
     }
 
+    public void removeCurrentSession() {
+        VaadinSession session = VaadinSession.getCurrent();
+        session.setAttribute(USER_SESSION_ID, null);
+    }
+
 }
