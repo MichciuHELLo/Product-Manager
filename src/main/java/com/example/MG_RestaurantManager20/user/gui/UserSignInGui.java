@@ -83,7 +83,7 @@ public class UserSignInGui extends Composite {
                     Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else {
-                    if (user.get().getPassword().equals(passwordField)) {
+                    if (user.get().checkPassword(passwordField)) {
                         userSession.createNewSession(user.get().getId());
                         UI.getCurrent().navigate(UserMainMenu.class);
                     }

@@ -4,10 +4,12 @@ import com.example.MG_RestaurantManager20.user.adapters.database.UserRepository;
 import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +30,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changePassword(String email, String newPassword) {
-        userRepository.changePassword(email, newPassword);
+        String passwordSalt = new Random().ints(97, 122 + 1)
+                .limit(32)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        String passwordHash = DigestUtils.sha1Hex(newPassword + passwordSalt);
+        userRepository.changePassword(email, passwordHash, passwordSalt);
     }
 }
