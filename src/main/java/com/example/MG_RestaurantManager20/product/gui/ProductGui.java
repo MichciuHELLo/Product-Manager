@@ -82,7 +82,7 @@ public class ProductGui extends VerticalLayout {
         this.userSession = userSession;
         this.productService = productService;
 
-        if (userSession.checkIfAuthenticated()) {
+        if (userSession.checkIfAuthenticatedAdmin()) {
             setSizeFull();
             configureGrid();
             configureView();
@@ -168,6 +168,7 @@ public class ProductGui extends VerticalLayout {
                 }
             });
         } else {
+            userSession.removeCurrentSession();
             UI.getCurrent().navigate(UserSignInGui.class);
             UI.getCurrent().getPage().reload();
         }

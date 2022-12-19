@@ -102,7 +102,7 @@ public class RecipeGui2 extends VerticalLayout {
         this.requiredProductsService = requiredProductsService;
         this.productService = productService;
 
-        if (userSession.checkIfAuthenticated()) {
+        if (userSession.checkIfAuthenticatedAdmin()) {
             setSizeFull();
             configureGrid();
             configureView();
@@ -227,6 +227,7 @@ public class RecipeGui2 extends VerticalLayout {
                 }
             });
         } else {
+            userSession.removeCurrentSession();
             UI.getCurrent().navigate(UserSignInGui.class);
             UI.getCurrent().getPage().reload();
         }

@@ -84,7 +84,7 @@ public class EmployeeGui extends VerticalLayout {
         this.employeeService = employeeService;
         this.emailService = emailService;
 
-        if (userSession.checkIfAuthenticated()) {
+        if (userSession.checkIfAuthenticatedAdmin()) {
             setSizeFull();
             configureGrid();
             configureView();
@@ -177,6 +177,7 @@ public class EmployeeGui extends VerticalLayout {
                 }
             });
         } else {
+            userSession.removeCurrentSession();
             UI.getCurrent().navigate(UserSignInGui.class);
             UI.getCurrent().getPage().reload();
         }

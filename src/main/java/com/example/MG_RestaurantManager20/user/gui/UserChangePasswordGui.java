@@ -52,11 +52,11 @@ public class UserChangePasswordGui extends Composite {
         VerticalLayout verticalLayout = new VerticalLayout(
                 new H2("Change your password"),
                 emailField,
+                // TODO forgot password ma pole currentPasswordField?
                 currentPasswordField,
                 newPasswordField,
                 newPasswordField2,
                 roleComboBox,
-                // TODO forgot password link should be added
                 new Button("Change password", event -> changePassword(
                         emailField.getValue(),
                         currentPasswordField.getValue(),
@@ -109,6 +109,7 @@ public class UserChangePasswordGui extends Composite {
                     if (employee.get().getPassword().equals(currentPasswordField)) {
                         employeeService.changePassword(emailField, newPasswordField);
                         UI.getCurrent().navigate(UserSignInGui.class);
+                        Notification.show("Password changed.").setPosition(Notification.Position.BOTTOM_CENTER);
                     }
                     else {
                         Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
