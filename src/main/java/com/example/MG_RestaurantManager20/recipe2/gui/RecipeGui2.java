@@ -7,7 +7,9 @@ import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
 import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
 import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
 import com.example.MG_RestaurantManager20.recipe2.service.RequiredProductsService;
+import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -80,120 +82,124 @@ public class RecipeGui2 extends VerticalLayout {
         this.requiredProductsService = requiredProductsService;
         this.productService = productService;
 
-        setSizeFull();
-        configureGrid();
-        configureView();
+        if (userSession.checkIfAuthenticated()) {
+            setSizeFull();
+            configureGrid();
+            configureView();
 
-        add(recipeGrid, horizontalLayoutRecipe, requiredProductsGrid, horizontalLayoutProduct);
-        updateRecipeGrid();
+            add(recipeGrid, horizontalLayoutRecipe, requiredProductsGrid, horizontalLayoutProduct);
+            updateRecipeGrid();
 
-        recipeGrid.addSelectionListener(selection -> deleteRecipeButton.setVisible(recipeGrid.getSelectedItems().size() > 0));
+            recipeGrid.addSelectionListener(selection -> deleteRecipeButton.setVisible(recipeGrid.getSelectedItems().size() > 0));
 
-        addRecipeButton.addClickListener(addRecipeClickEvent -> {
-            if (nameTextField.getValue().isEmpty()) {
-                Notification.show("Name can't be empty.");
-            } else {
-                String name = nameTextField.getValue();
-                name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+            addRecipeButton.addClickListener(addRecipeClickEvent -> {
+                if (nameTextField.getValue().isEmpty()) {
+                    Notification.show("Name can't be empty.").setPosition(Notification.Position.BOTTOM_CENTER);
+                } else {
+                    String name = nameTextField.getValue();
+                    name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 
-                String description = descriptionTextField.getValue();
-                description = description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase();
+                    String description = descriptionTextField.getValue();
+                    description = description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase();
 
-                recipeService.addNewRecipe(new Recipe2(userSession.getUserSessionId(), name, description));
+                    recipeService.addNewRecipe(new Recipe2(userSession.getUserSessionId(), name, description));
 
-                nameTextField.clear();
-                descriptionTextField.clear();
+                    nameTextField.clear();
+                    descriptionTextField.clear();
 
-                updateRecipeGrid();
-            }
-        });
-
-// SHOW PRODUCTS
-        recipeGrid.addComponentColumn(recipe -> {
-            Button showProducts = new Button("Show Products");
-            showProducts.addClickListener(showProductsClickEvent -> {
-                // TODO zaimplementować edycje produktów wchodzących w skład przepisu
-                recipeGrid.setVisible(false);
-                horizontalLayoutRecipe.setVisible(false);
-
-                updateRequiredProductsGrid(recipe.getId());
-
-                requiredProductsGrid.addSelectionListener(selection -> deleteProductButton.setVisible(requiredProductsGrid.getSelectedItems().size() > 0));
-
-                requiredProductsGrid.setVisible(true);
-                horizontalLayoutProduct.setVisible(true);
-                returnButton.setVisible(true);
-
-                addProductButton.addClickListener(addProductClickEvent -> {
-                    if (nameProductComboBox.isEmpty() || quantityProductNumberField.isEmpty()) {
-                        Notification.show("Fill all the fields to add new product to your recipe.");
-                    }
-                    else {
-                        requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(),nameProductComboBox.getValue().getName(), quantityProductNumberField.getValue());
-                        updateRequiredProductsGrid(recipe.getId());
-                    }
-                });
-
-                deleteProductButton.addClickListener(deleteProductClickEvent -> {
-                    if (requiredProductsGrid.getSelectedItems().size() > 0) {
-                        Notification notification = createAcceptNotificationForProduct(requiredProductsGrid.getSelectedItems(), recipe.getId());
-                        notification.open();
-                    }
-                });
-
-                // TODO przesunąć ten guzik na prawo
-                // TODO jak jest za dużo produktów potrzebnych w przepisie to rozszerza się grid. Nawet jeśli się usunie produkty to za szeroki grid zostaje
-                returnButton.addClickListener(returnClickEvent -> {
-                    requiredProductsGrid.setVisible(false);
-                    horizontalLayoutProduct.setVisible(false);
-
-                    recipeGrid.setVisible(true);
-                    horizontalLayoutRecipe.setVisible(true);
                     updateRecipeGrid();
-                });
+                }
             });
 
-            return showProducts;
-        });
+// SHOW PRODUCTS
+            recipeGrid.addComponentColumn(recipe -> {
+                Button showProducts = new Button("Show Products");
+                showProducts.addClickListener(showProductsClickEvent -> {
+                    // TODO zaimplementować edycje produktów wchodzących w skład przepisu
+                    recipeGrid.setVisible(false);
+                    horizontalLayoutRecipe.setVisible(false);
+
+                    updateRequiredProductsGrid(recipe.getId());
+
+                    requiredProductsGrid.addSelectionListener(selection -> deleteProductButton.setVisible(requiredProductsGrid.getSelectedItems().size() > 0));
+
+                    requiredProductsGrid.setVisible(true);
+                    horizontalLayoutProduct.setVisible(true);
+                    returnButton.setVisible(true);
+
+                    addProductButton.addClickListener(addProductClickEvent -> {
+                        if (nameProductComboBox.isEmpty() || quantityProductNumberField.isEmpty()) {
+                            Notification.show("Fill all the fields to add new product to your recipe.").setPosition(Notification.Position.BOTTOM_CENTER);
+                        } else {
+                            requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), nameProductComboBox.getValue().getName(), quantityProductNumberField.getValue());
+                            updateRequiredProductsGrid(recipe.getId());
+                        }
+                    });
+
+                    deleteProductButton.addClickListener(deleteProductClickEvent -> {
+                        if (requiredProductsGrid.getSelectedItems().size() > 0) {
+                            Notification notification = createAcceptNotificationForProduct(requiredProductsGrid.getSelectedItems(), recipe.getId());
+                            notification.open();
+                        }
+                    });
+
+                    // TODO przesunąć ten guzik na prawo
+                    // TODO jak jest za dużo produktów potrzebnych w przepisie to rozszerza się grid. Nawet jeśli się usunie produkty to za szeroki grid zostaje
+                    returnButton.addClickListener(returnClickEvent -> {
+                        requiredProductsGrid.setVisible(false);
+                        horizontalLayoutProduct.setVisible(false);
+
+                        recipeGrid.setVisible(true);
+                        horizontalLayoutRecipe.setVisible(true);
+                        updateRecipeGrid();
+                    });
+                });
+
+                return showProducts;
+            });
 // END SHOW PRODUCTS
 
 
 //EDIT
-        Editor<Recipe2> editor = recipeGrid.getEditor();
-        Grid.Column<Recipe2> editColumn = recipeGrid.addComponentColumn(recipe -> {
-            Button editButton = new Button("Edit");
-            editButton.addClickListener(editClickEvent -> {
-                editor.editItem(recipe);
+            Editor<Recipe2> editor = recipeGrid.getEditor();
+            Grid.Column<Recipe2> editColumn = recipeGrid.addComponentColumn(recipe -> {
+                Button editButton = new Button("Edit");
+                editButton.addClickListener(editClickEvent -> {
+                    editor.editItem(recipe);
+                });
+                editButton.setEnabled(!editor.isOpen());
+                return editButton;
             });
-            editButton.setEnabled(!editor.isOpen());
-            return editButton;
-        });
-        editor.setBinder(binder);
-        editor.setBuffered(true);
+            editor.setBinder(binder);
+            editor.setBuffered(true);
 
-        createEditFields();
+            createEditFields();
 
-        Button saveButton = new Button("Save", e -> {
-            if (!(editor.getItem().getName().equals(nameEditField.getValue()) && editor.getItem().getDescription().equals(descriptionEditField.getValue())
-                    || nameEditField.getValue().isEmpty() || descriptionEditField.getValue().isEmpty())) {
-                recipeService.updateRecipeById(editor.getItem().getId(), new Recipe2(nameEditField.getValue(), descriptionEditField.getValue(), editor.getItem().getRequiredProducts()));
-                editor.save();
-            }
-            updateRecipeGrid();
-        });
-        Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-        HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
-        actions.setPadding(false);
-        editColumn.setEditorComponent(actions);
+            Button saveButton = new Button("Save", e -> {
+                if (!(editor.getItem().getName().equals(nameEditField.getValue()) && editor.getItem().getDescription().equals(descriptionEditField.getValue())
+                        || nameEditField.getValue().isEmpty() || descriptionEditField.getValue().isEmpty())) {
+                    recipeService.updateRecipeById(editor.getItem().getId(), new Recipe2(nameEditField.getValue(), descriptionEditField.getValue(), editor.getItem().getRequiredProducts()));
+                    editor.save();
+                }
+                updateRecipeGrid();
+            });
+            Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
+            cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+            HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
+            actions.setPadding(false);
+            editColumn.setEditorComponent(actions);
 //EDIT
 
-        deleteRecipeButton.addClickListener(deleteRecipeClickEvent -> {
-            if (recipeGrid.getSelectedItems().size() > 0) {
-                Notification notification = createAcceptNotificationForRecipe(recipeGrid.getSelectedItems());
-                notification.open();
-            }
-        });
+            deleteRecipeButton.addClickListener(deleteRecipeClickEvent -> {
+                if (recipeGrid.getSelectedItems().size() > 0) {
+                    Notification notification = createAcceptNotificationForRecipe(recipeGrid.getSelectedItems());
+                    notification.open();
+                }
+            });
+        } else {
+            UI.getCurrent().navigate(UserSignInGui.class);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
     private void configureView() {
@@ -261,7 +267,7 @@ public class RecipeGui2 extends VerticalLayout {
                     recipeService.deleteSelectedRecipes(selectedItems);
                     notification.close();
                     updateRecipeGrid();
-                    Notification.show("Deleted");
+                    Notification.show("Deleted").setPosition(Notification.Position.BOTTOM_CENTER);
                 });
         yesButton.getStyle().set("margin", "0 0 0 var(--lumo-space-l)");
 
@@ -295,7 +301,7 @@ public class RecipeGui2 extends VerticalLayout {
                     requiredProductsService.deleteSelectedRequiredProducts(selectedItems);
                     notification.close();
                     updateRequiredProductsGrid(recipeId);
-                    Notification.show("Deleted");
+                    Notification.show("Deleted").setPosition(Notification.Position.BOTTOM_CENTER);
                 });
         yesButton.getStyle().set("margin", "0 0 0 var(--lumo-space-l)");
 

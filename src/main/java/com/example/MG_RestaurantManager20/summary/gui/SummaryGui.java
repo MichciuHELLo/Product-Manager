@@ -3,17 +3,12 @@ package com.example.MG_RestaurantManager20.summary.gui;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
-//import com.example.MG_RestaurantManager20.recipe2.service.RecipeCaloriesService2;
 import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
-
-@Route("Summary")
 public class SummaryGui extends VerticalLayout {
 
 //    @Autowired

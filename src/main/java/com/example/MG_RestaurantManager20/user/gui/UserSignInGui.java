@@ -2,7 +2,7 @@ package com.example.MG_RestaurantManager20.user.gui;
 
 import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
-import com.example.MG_RestaurantManager20.employee.gui.EmployeeMainMenu;
+import com.example.MG_RestaurantManager20.employee.gui.EmployeeWorkGui;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.domain.UserRole;
@@ -55,7 +55,6 @@ public class UserSignInGui extends Composite {
                 emailField,
                 passwordField,
                 roleComboBox,
-                // TODO forgot password link should be added
                 new Button("Login", event -> signIn(
                         emailField.getValue(),
                         passwordField.getValue(),
@@ -71,17 +70,17 @@ public class UserSignInGui extends Composite {
 
     private void signIn(String emailField, String passwordField, UserRole userRole) {
         if (emailField.trim().isEmpty())
-            Notification.show("Enter your e-mail.");
+            Notification.show("Enter your e-mail.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (passwordField.trim().isEmpty())
-            Notification.show("Enter your password.");
+            Notification.show("Enter your password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (userRole == null){
-            Notification.show("Enter your role.");
+            Notification.show("Enter your role.").setPosition(Notification.Position.BOTTOM_CENTER);
         }
         else {
             if (userRole.equals(UserRole.ADMIN)){
                 Optional<User> user = userService.getUserByEmail(emailField);
                 if (user.isEmpty()){
-                    Notification.show("Wrong credentials.");
+                    Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else {
                     if (user.get().getPassword().equals(passwordField)) {
@@ -89,14 +88,14 @@ public class UserSignInGui extends Composite {
                         UI.getCurrent().navigate(UserMainMenu.class);
                     }
                     else {
-                        Notification.show("Wrong credentials.");
+                        Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                     }
                 }
             }
             else {
                 Optional<Employee> employee = employeeService.getEmployeeByEmail(emailField);
                 if (employee.isEmpty()){
-                    Notification.show("Wrong credentials.");
+                    Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else{
                     if (employee.get().getTempFile()) {
@@ -105,10 +104,10 @@ public class UserSignInGui extends Composite {
                     else {
                         if (employee.get().getPassword().equals(passwordField)) {
                             userSession.createNewSession(employee.get().getId());
-                            UI.getCurrent().navigate(EmployeeMainMenu.class);
+                            UI.getCurrent().navigate(EmployeeWorkGui.class);
                         }
                         else {
-                            Notification.show("Wrong credentials.");
+                            Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                         }
                     }
                 }
