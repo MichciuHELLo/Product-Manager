@@ -8,6 +8,8 @@ import com.example.MG_RestaurantManager20.product.service.ProductService;
 import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
 import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
 import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
+import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -47,76 +49,83 @@ public class EmployeeWorkGui extends VerticalLayout {
         this.productService = productService;
         this.employeeService = employeeService;
 
-        setSizeFull();
-        configureGrid();
-        configureView();
+//        checkAuthorization();
 
-        add(recipeGrid, orderButton);
-        updateGrid();
+        if (userSession.checkIfAuthenticated()) {
+            setSizeFull();
+            configureGrid();
+            configureView();
 
-        configureMapOfOrders();
+            add(recipeGrid, orderButton);
+            updateGrid();
 
-        recipeGrid.addComponentColumn(recipe -> {
-            NumberField numberField = new NumberField();
-            numberField.setHasControls(false);
-            numberField.setValue(0D);
-            numberField.setReadOnly(true);
+            configureMapOfOrders();
 
-            Button addButton = new Button(new Icon(VaadinIcon.PLUS));
-            checkIfEnoughProducts(recipe, 0D, addButton);
+            recipeGrid.addComponentColumn(recipe -> {
+                NumberField numberField = new NumberField();
+                numberField.setHasControls(false);
+                numberField.setValue(0D);
+                numberField.setReadOnly(true);
 
-            Button removeButton = new Button(new Icon(VaadinIcon.MINUS));
+                Button addButton = new Button(new Icon(VaadinIcon.PLUS));
+                checkIfEnoughProducts(recipe, 0D, addButton);
 
-            addButton.addClickListener(event -> {
-                counter = numberField.getValue();
-                counter++;
-                ordersMap.put(recipe, counter);
-                numberField.setValue(counter);
-                setEnabledRemoveButton(removeButton, counter);
-                checkIfEnoughProducts(recipe, counter, addButton);
+                Button removeButton = new Button(new Icon(VaadinIcon.MINUS));
+
+                addButton.addClickListener(event -> {
+                    counter = numberField.getValue();
+                    counter++;
+                    ordersMap.put(recipe, counter);
+                    numberField.setValue(counter);
+                    setEnabledRemoveButton(removeButton, counter);
+                    checkIfEnoughProducts(recipe, counter, addButton);
+                });
+
+                removeButton.setEnabled(false);
+                removeButton.addClickListener(event -> {
+                    counter = numberField.getValue();
+                    counter--;
+                    ordersMap.put(recipe, counter);
+                    numberField.setValue(counter);
+                    setEnabledRemoveButton(removeButton, counter);
+                    checkIfEnoughProducts(recipe, counter, addButton);
+                });
+
+                HorizontalLayout v = new HorizontalLayout(numberField, addButton, removeButton);
+                v.setSpacing(true);
+
+                return v;
             });
 
-            removeButton.setEnabled(false);
-            removeButton.addClickListener(event -> {
-                counter = numberField.getValue();
-                counter--;
-                ordersMap.put(recipe, counter);
-                numberField.setValue(counter);
-                setEnabledRemoveButton(removeButton, counter);
-                checkIfEnoughProducts(recipe, counter, addButton);
-            });
-
-            HorizontalLayout v = new HorizontalLayout(numberField, addButton, removeButton);
-            v.setSpacing(true);
-
-            return v;
-        });
-
-        orderButton.addClickListener(event -> {
-            boolean moreThenZeroOrders = false;
-            for (Double value : ordersMap.values()) {
-                if (value > 0) {
-                    moreThenZeroOrders = true;
-                    break;
-                }
-            }
-
-            if (moreThenZeroOrders) {
-                for (Recipe2 recipe : ordersMap.keySet()) {
-                    for (int i = 0; i < recipe.getRequiredProducts().size(); i++) {
-                        RequiredProducts requiredProduct = recipe.getRequiredProducts().get(i);
-                        Product product = productService.getProductByIdFetch(requiredProduct.getProduct_fk());
-                        product.setQuantity(product.getQuantity() - ordersMap.get(recipe) * requiredProduct.getQuantity());
-                        productService.updateProduct(product.getId(), product);
+            orderButton.addClickListener(event -> {
+                boolean moreThenZeroOrders = false;
+                for (Double value : ordersMap.values()) {
+                    if (value > 0) {
+                        moreThenZeroOrders = true;
+                        break;
                     }
                 }
-                Notification.show("You placed an order!");
-                updateGrid();
-                configureMapOfOrders();
-            } else {
-                Notification.show("You have to add at least one dish from the menu.");
-            }
-        });
+
+                if (moreThenZeroOrders) {
+                    for (Recipe2 recipe : ordersMap.keySet()) {
+                        for (int i = 0; i < recipe.getRequiredProducts().size(); i++) {
+                            RequiredProducts requiredProduct = recipe.getRequiredProducts().get(i);
+                            Product product = productService.getProductByIdFetch(requiredProduct.getProduct_fk());
+                            product.setQuantity(product.getQuantity() - ordersMap.get(recipe) * requiredProduct.getQuantity());
+                            productService.updateProduct(product.getId(), product);
+                        }
+                    }
+                    Notification.show("You placed an order!").setPosition(Notification.Position.BOTTOM_CENTER);
+                    updateGrid();
+                    configureMapOfOrders();
+                } else {
+                    Notification.show("You have to add at least one dish from the menu.").setPosition(Notification.Position.BOTTOM_CENTER);
+                }
+            });
+        } else {
+            UI.getCurrent().navigate(UserSignInGui.class);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
     private void configureGrid() {

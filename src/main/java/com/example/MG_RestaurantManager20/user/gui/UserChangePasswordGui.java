@@ -72,22 +72,22 @@ public class UserChangePasswordGui extends Composite {
 
     private void changePassword(String emailField, String currentPasswordField, String newPasswordField, String newPasswordField2, UserRole userRole) {
         if (emailField.trim().isEmpty())
-            Notification.show("Enter your e-mail.");
+            Notification.show("Enter your e-mail.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (currentPasswordField.trim().isEmpty())
-            Notification.show("Enter your password.");
+            Notification.show("Enter your password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (newPasswordField.trim().isEmpty())
-            Notification.show("Enter your new password.");
+            Notification.show("Enter your new password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (newPasswordField2.trim().isEmpty())
-            Notification.show("Repeat new password.");
+            Notification.show("Repeat new password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (userRole == null)
-            Notification.show("Enter your role.");
+            Notification.show("Enter your role.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (!newPasswordField.equals(newPasswordField2))
-            Notification.show("New passwords aren't the same.");
+            Notification.show("New passwords aren't the same.").setPosition(Notification.Position.BOTTOM_CENTER);
         else {
             if (userRole.equals(UserRole.ADMIN)){
                 Optional<User> user = userService.getUserByEmail(emailField);
                 if (user.isEmpty()){
-                    Notification.show("Wrong credentials.");
+                    Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else {
                     if (user.get().getPassword().equals(currentPasswordField)) {
@@ -95,14 +95,14 @@ public class UserChangePasswordGui extends Composite {
                         UI.getCurrent().navigate(UserSignInGui.class);
                     }
                     else {
-                        Notification.show("Wrong credentials.");
+                        Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                     }
                 }
             }
             else {
                 Optional<Employee> employee = employeeService.getEmployeeByEmail(emailField);
                 if (employee.isEmpty()){
-                    Notification.show("Wrong credentials.");
+                    Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                 }
                 else{
                     if (employee.get().getPassword().equals(currentPasswordField)) {
@@ -110,7 +110,7 @@ public class UserChangePasswordGui extends Composite {
                         UI.getCurrent().navigate(UserSignInGui.class);
                     }
                     else {
-                        Notification.show("Wrong credentials.");
+                        Notification.show("Wrong credentials.").setPosition(Notification.Position.BOTTOM_CENTER);
                     }
                 }
             }

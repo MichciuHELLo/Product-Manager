@@ -5,6 +5,7 @@ import com.example.MG_RestaurantManager20.user.domain.UserRole;
 import com.example.MG_RestaurantManager20.user.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -13,11 +14,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.Optional;
 
 @Route("Register")
+@PageTitle("Register")
 public class UserRegisterGui extends Composite {
 
     private final UserService userService;
@@ -70,27 +73,28 @@ public class UserRegisterGui extends Composite {
 
     private void register(String textFieldName, String textFieldSurname, String textFieldPhoneNumber, String emailField, String passwordField1, String passwordField2) {
         if (textFieldName.trim().isEmpty())
-            Notification.show("Enter your name.");
+            Notification.show("Enter your name.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (textFieldSurname.trim().isEmpty())
-            Notification.show("Enter your surname.");
+            Notification.show("Enter your surname.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (textFieldPhoneNumber.trim().isEmpty())
-            Notification.show("Enter your phone number.");
+            Notification.show("Enter your phone number.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (emailField.trim().isEmpty())
-            Notification.show("Enter your e-mail.");
+            Notification.show("Enter your e-mail.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (passwordField1.trim().isEmpty())
-            Notification.show("Enter your password.");
+            Notification.show("Enter your password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (passwordField2.trim().isEmpty())
-            Notification.show("Confirm your password.");
+            Notification.show("Confirm your password.").setPosition(Notification.Position.BOTTOM_CENTER);
         else if (!passwordField1.equals(passwordField2))
-            Notification.show("Passwords don't match.");
+            Notification.show("Passwords don't match.").setPosition(Notification.Position.BOTTOM_CENTER);
         else{
             Optional<User> user = userService.getUserByEmail(emailField);
             if (user.isEmpty()){
                 userService.addNewUser(new User(textFieldName, textFieldSurname, textFieldPhoneNumber, emailField, passwordField1, UserRole.ADMIN));
-                Notification.show("Registration succeeded!");
+                Notification.show("Registration succeeded!").setPosition(Notification.Position.BOTTOM_CENTER);
+                UI.getCurrent().navigate(UserSignInGui.class);
             }
             else
-                Notification.show("Account with given e-mail already exists.");
+                Notification.show("Account with given e-mail already exists.").setPosition(Notification.Position.BOTTOM_CENTER);
         }
     }
 }

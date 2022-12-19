@@ -4,7 +4,9 @@ import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.mail.service.EmailService;
+import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -62,87 +64,94 @@ public class EmployeeGui extends VerticalLayout {
         this.employeeService = employeeService;
         this.emailService = emailService;
 
-        setSizeFull();
-        configureGrid();
-        configureView();
+        if (userSession.checkIfAuthenticated()) {
+            setSizeFull();
+            configureGrid();
+            configureView();
 
-        add(employeeGrid, horizontalLayout);
-        updateGrid();
+            add(employeeGrid, horizontalLayout);
+            updateGrid();
 
-        employeeGrid.addSelectionListener(selection -> deleteEmployeeButton.setVisible(employeeGrid.getSelectedItems().size() > 0));
+            employeeGrid.addSelectionListener(selection -> deleteEmployeeButton.setVisible(employeeGrid.getSelectedItems().size() > 0));
 
-        addEmployeeButton.addClickListener(buttonClickEvent -> {
-            if (nameTextField.getValue().isEmpty() || surnameTextField.getValue().isEmpty() || emailField.getValue().isEmpty()) {
-                Notification.show("Fill all the fields.");
-            } else {
-                if (!emailField.isInvalid()) {
+            addEmployeeButton.addClickListener(buttonClickEvent -> {
+                if (nameTextField.getValue().isEmpty() || surnameTextField.getValue().isEmpty() || emailField.getValue().isEmpty()) {
+                    Notification.show("Fill all the fields.").setPosition(Notification.Position.BOTTOM_CENTER);
+                } else {
+                    if (!emailField.isInvalid()) {
 
-                    String name = nameTextField.getValue();
-                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
+                        String name = nameTextField.getValue();
+                        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
 
-                    String surname = surnameTextField.getValue();
-                    surname = surname.substring(0,1).toUpperCase() + surname.substring(1).toLowerCase();
+                        String surname = surnameTextField.getValue();
+                        surname = surname.substring(0,1).toUpperCase() + surname.substring(1).toLowerCase();
 
-                    String tempPassword = UUID.randomUUID().toString().replaceAll("-", "");
-                    employeeService.addNewEmployee(
-                            new Employee(userSession.getUserSessionId(), name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
+                        String tempPassword = UUID.randomUUID().toString().replaceAll("-", "");
+                        employeeService.addNewEmployee(
+                                new Employee(userSession.getUserSessionId(), name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
 
-                    emailService.sendEmail(emailField.getValue(), String.format(EMAIL_MESSAGE, tempPassword));
+                        emailService.sendEmail(emailField.getValue(), String.format(EMAIL_MESSAGE, tempPassword));
 
-                    nameTextField.clear();
-                    surnameTextField.clear();
-                    emailField.clear();
+                        nameTextField.clear();
+                        surnameTextField.clear();
+                        emailField.clear();
 
-                    updateGrid();
+                        updateGrid();
+                    }
                 }
-            }
-        });
+            });
 
 //EDIT
-        Editor<Employee> editor = employeeGrid.getEditor();
-        Grid.Column<Employee> editColumn = employeeGrid.addComponentColumn(employee -> {
-            Button editButton = new Button("Edit");
-            editButton.addClickListener(e -> {
-                System.out.printf("Edit: %d %s %s %s%n", employee.getId(), employee.getFirstName(), employee.getSurname(), employee.getEmail());
-                editor.editItem(employee);
+            Editor<Employee> editor = employeeGrid.getEditor();
+            Grid.Column<Employee> editColumn = employeeGrid.addComponentColumn(employee -> {
+                Button editButton = new Button("Edit");
+                editButton.addClickListener(e -> {
+                    System.out.printf("Edit: %d %s %s %s%n", employee.getId(), employee.getFirstName(), employee.getSurname(), employee.getEmail());
+                    editor.editItem(employee);
+                });
+                editButton.setEnabled(!editor.isOpen());
+                return editButton;
             });
-            editButton.setEnabled(!editor.isOpen());
-            return editButton;
-        });
-        editor.setBinder(binder);
-        editor.setBuffered(true);
+            editor.setBinder(binder);
+            editor.setBuffered(true);
 
-        createEditFields();
+            createEditFields();
 
-        Button saveButton = new Button("Save", e -> {
-            if (!(editor.getItem().getFirstName().equals(firstNameEditField.getValue()) && editor.getItem().getSurname().equals(surnameEditField.getValue()) && editor.getItem().getEmail().equals(emailEditField.getValue())
-                    || firstNameEditField.getValue().isEmpty() || surnameEditField.getValue().isEmpty() || emailEditField.getValue().isEmpty())) {
-                if (!editor.getItem().getEmail().equals(emailEditField.getValue())) {
-                    if (employeeService.getEmployeeByEmail(emailEditField.getValue()).isPresent()) {
-                        Notification.show(String.format("Employee with this email: %s already exists", emailEditField.getValue()));
+            Button saveButton = new Button("Save", e -> {
+                if (!(editor.getItem().getFirstName().equals(firstNameEditField.getValue()) && editor.getItem().getSurname().equals(surnameEditField.getValue()) && editor.getItem().getEmail().equals(emailEditField.getValue())
+                        || firstNameEditField.getValue().isEmpty() || surnameEditField.getValue().isEmpty() || emailEditField.getValue().isEmpty())) {
+                    if (!editor.getItem().getEmail().equals(emailEditField.getValue())) {
+                        if (employeeService.getEmployeeByEmail(emailEditField.getValue()).isPresent()) {
+                            Notification.show(String.format("Employee with this email: %s already exists", emailEditField.getValue())).setPosition(Notification.Position.BOTTOM_CENTER);
+                        } else {
+                            employeeService.updateEmployee(editor.getItem().getId(), new Employee(firstNameEditField.getValue(), surnameEditField.getValue(), emailEditField.getValue(), editor.getItem().getEmployeeSince()));
+                            editor.save();
+                        }
                     } else {
                         employeeService.updateEmployee(editor.getItem().getId(), new Employee(firstNameEditField.getValue(), surnameEditField.getValue(), emailEditField.getValue(), editor.getItem().getEmployeeSince()));
                         editor.save();
                     }
-                } else {
-                    employeeService.updateEmployee(editor.getItem().getId(), new Employee(firstNameEditField.getValue(), surnameEditField.getValue(), emailEditField.getValue(), editor.getItem().getEmployeeSince()));
-                    editor.save();
                 }
-            }
-        });
-        Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-        HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
-        actions.setPadding(false);
-        editColumn.setEditorComponent(actions);
+            });
+            Button cancelButton = new Button(VaadinIcon.CLOSE.create(), e -> editor.cancel());
+            cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+            HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
+            actions.setPadding(false);
+            editColumn.setEditorComponent(actions);
 //EDIT
 
-        deleteEmployeeButton.addClickListener(buttonClickEvent -> {
-            if (employeeGrid.getSelectedItems().size() > 0) {
-                Notification notification = createAcceptNotification(employeeGrid.getSelectedItems());
-                notification.open();
-            }
-        });
+            deleteEmployeeButton.addClickListener(buttonClickEvent -> {
+                if (employeeGrid.getSelectedItems().size() > 0) {
+                    Notification notification = createAcceptNotification(employeeGrid.getSelectedItems());
+                    notification.open();
+                }
+            });
+        } else {
+            UI.getCurrent().navigate(UserSignInGui.class);
+            UI.getCurrent().getPage().reload();
+        }
+
+
     }
 
     private void configureGrid() {
@@ -187,7 +196,7 @@ public class EmployeeGui extends VerticalLayout {
                     employeeService.deleteEmployees(selectedItems);
                     notification.close();
                     updateGrid();
-                    Notification.show("Deleted");
+                    Notification.show("Deleted").setPosition(Notification.Position.BOTTOM_CENTER);
                 });
         yesButton.getStyle().set("margin", "0 0 0 var(--lumo-space-l)");
 
