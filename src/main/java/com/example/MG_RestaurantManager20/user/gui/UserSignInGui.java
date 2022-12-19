@@ -102,7 +102,7 @@ public class UserSignInGui extends Composite {
                         UI.getCurrent().navigate(UserChangePasswordGui.class);
                     }
                     else {
-                        if (employee.get().getPassword().equals(passwordField)) {
+                        if (employee.get().checkPassword(passwordField)) {
                             userSession.createNewSession(employee.get().getId(), UserRole.EMPLOYEE);
                             UI.getCurrent().navigate(EmployeeWorkGui.class);
                         }
