@@ -1,6 +1,6 @@
 package com.example.MG_RestaurantManager20.product.domain;
 
-import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe.domain.RequiredProducts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

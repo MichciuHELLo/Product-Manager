@@ -1,4 +1,4 @@
-package com.example.MG_RestaurantManager20.recipe2.domain;
+package com.example.MG_RestaurantManager20.recipe.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

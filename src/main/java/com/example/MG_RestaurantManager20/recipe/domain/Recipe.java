@@ -1,4 +1,4 @@
-package com.example.MG_RestaurantManager20.recipe2.domain;
+package com.example.MG_RestaurantManager20.recipe.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Entity
-public class Recipe2 {
+public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,13 +29,13 @@ public class Recipe2 {
     @JoinColumn(name = "recipe_fk", referencedColumnName = "id")
     private List<RequiredProducts> requiredProducts;
 
-    public Recipe2(Long user_fk, String name, String description) {
+    public Recipe(Long user_fk, String name, String description) {
         this.user_fk = user_fk;
         this.name = name;
         this.description = description;
     }
 
-    public Recipe2(String name, String description, List<RequiredProducts> requiredProducts) {
+    public Recipe(String name, String description, List<RequiredProducts> requiredProducts) {
         this.name = name;
         this.description = description;
         this.requiredProducts = requiredProducts;
