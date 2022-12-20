@@ -136,7 +136,6 @@ public class EmployeeGui extends VerticalLayout {
             Grid.Column<Employee> editColumn = employeeGrid.addComponentColumn(employee -> {
                 Button editButton = new Button("Edit");
                 editButton.addClickListener(e -> {
-                    System.out.printf("Edit: %d %s %s %s%n", employee.getId(), employee.getFirstName(), employee.getSurname(), employee.getEmail());
                     editor.editItem(employee);
                 });
                 editButton.setEnabled(!editor.isOpen());

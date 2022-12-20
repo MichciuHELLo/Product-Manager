@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setText(text);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setFrom("restaurant@manager.com");
+            mimeMessageHelper.setFrom("restaurant.manager.mg@gmail.com");
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             LOGGER.error("Failed to send an e-mail to " + to);
