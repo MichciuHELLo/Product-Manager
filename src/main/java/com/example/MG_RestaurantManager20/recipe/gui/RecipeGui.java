@@ -162,6 +162,8 @@ public class RecipeGui extends VerticalLayout {
                             Notification.show("Fill all the fields to add new product to your recipe.").setPosition(Notification.Position.BOTTOM_CENTER);
                         } else {
                             requiredProductsService.addRequiredProductToRecipe(recipe.getId(), nameProductComboBox.getValue().getId(), nameProductComboBox.getValue().getName(), quantityProductNumberField.getValue());
+                            nameProductComboBox.clear();
+                            quantityProductNumberField.clear();
                             updateRequiredProductsGrid(recipe.getId());
                         }
                     });
