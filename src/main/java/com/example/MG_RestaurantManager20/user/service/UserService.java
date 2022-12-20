@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface UserService {
 
+    User getUserByIdFetch(Long userId);
+
     Optional<User> getUserByEmail(String email);
 
     User addNewUser(User user);

@@ -120,7 +120,7 @@ public class EmployeeGui extends VerticalLayout {
                         employeeService.addNewEmployee(
                                 new Employee(userSession.getUserSessionId(), name, surname, emailField.getValue().toLowerCase(), LocalDate.now(), tempPassword, true));
 
-                        emailService.sendEmail(emailField.getValue(), String.format(EMAIL_MESSAGE, tempPassword));
+                        emailService.sendEmail(emailField.getValue(), "Reset your password.", String.format(EMAIL_MESSAGE, tempPassword));
 
                         nameTextField.clear();
                         surnameTextField.clear();

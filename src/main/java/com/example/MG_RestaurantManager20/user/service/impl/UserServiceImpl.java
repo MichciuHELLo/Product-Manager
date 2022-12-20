@@ -1,5 +1,6 @@
 package com.example.MG_RestaurantManager20.user.service.impl;
 
+import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.user.adapters.database.UserRepository;
 import com.example.MG_RestaurantManager20.user.domain.User;
 import com.example.MG_RestaurantManager20.user.service.UserService;
@@ -16,6 +17,11 @@ import java.util.Random;
 public class UserServiceImpl implements UserService {
 
     final private UserRepository userRepository;
+
+    @Override
+    public User getUserByIdFetch(Long userId) {
+        return userRepository.getUserByIdFetch(userId);
+    }
 
     @Override
     public Optional<User> getUserByEmail(String email) {

@@ -22,13 +22,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendEmail(String to, String text) {
+    public void sendEmail(String to, String subject, String text) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
             mimeMessageHelper.setText(text);
             mimeMessageHelper.setTo(to);
-            mimeMessageHelper.setSubject("Reset your password.");
+            mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setFrom("restaurant@manager.com");
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
