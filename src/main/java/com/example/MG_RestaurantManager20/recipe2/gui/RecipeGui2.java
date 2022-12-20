@@ -255,7 +255,7 @@ public class RecipeGui2 extends VerticalLayout {
         requiredProductsGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         requiredProductsGrid.setVisible(false);
 
-        nameProductComboBox.setItems(productService.getProducts());
+        nameProductComboBox.setItems(productService.getProductsByUserSessionId(userSession.getUserSessionId()));
         nameProductComboBox.setItemLabelGenerator(Product::getName);
         quantityProductNumberField.setHasControls(true);
 
