@@ -1,6 +1,6 @@
-package com.example.MG_RestaurantManager20.recipe2.service;
+package com.example.MG_RestaurantManager20.recipe.service;
 
-import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe.domain.RequiredProducts;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

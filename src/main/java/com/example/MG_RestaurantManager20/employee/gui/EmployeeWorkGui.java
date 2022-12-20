@@ -5,9 +5,9 @@ import com.example.MG_RestaurantManager20.employee.domain.Employee;
 import com.example.MG_RestaurantManager20.employee.service.EmployeeService;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
-import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
-import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
-import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -48,17 +48,17 @@ public class EmployeeWorkGui extends VerticalLayout {
 
     private final HorizontalLayout header = new HorizontalLayout(headerLogo, headerButtons, headerLogOut);
 
-    private final RecipeService2 recipeService;
+    private final RecipeService recipeService;
     private final ProductService productService;
     private final EmployeeService employeeService;
 
-    private final Grid<Recipe2> recipeGrid = new Grid<>(Recipe2.class);
+    private final Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
     private final Button orderButton = new Button("Place an order", new Icon(VaadinIcon.PLUS));
-    private Map<Recipe2, Double> ordersMap = new HashMap<>();
+    private Map<Recipe, Double> ordersMap = new HashMap<>();
 
     private Double counter = 0D;
 
-    public EmployeeWorkGui(UserSession userSession, RecipeService2 recipeService, ProductService productService, EmployeeService employeeService) {
+    public EmployeeWorkGui(UserSession userSession, RecipeService recipeService, ProductService productService, EmployeeService employeeService) {
         this.userSession = userSession;
         this.recipeService = recipeService;
         this.productService = productService;
@@ -128,7 +128,7 @@ public class EmployeeWorkGui extends VerticalLayout {
                 }
 
                 if (moreThenZeroOrders) {
-                    for (Recipe2 recipe : ordersMap.keySet()) {
+                    for (Recipe recipe : ordersMap.keySet()) {
                         for (int i = 0; i < recipe.getRequiredProducts().size(); i++) {
                             RequiredProducts requiredProduct = recipe.getRequiredProducts().get(i);
                             Product product = productService.getProductByIdFetch(requiredProduct.getProduct_fk());
@@ -172,14 +172,14 @@ public class EmployeeWorkGui extends VerticalLayout {
 
     private void updateGrid() {
         Optional<Employee> employee = employeeService.getEmployeeById(userSession.getUserSessionId());
-        List<Recipe2> recipes = recipeService.getRecipesByUsersSessionId(employee.get().getUser_fk());
+        List<Recipe> recipes = recipeService.getRecipesByUsersSessionId(employee.get().getUser_fk());
         recipeGrid.setItems(recipes);
     }
 
     private void configureMapOfOrders() {
         Optional<Employee> employee = employeeService.getEmployeeById(userSession.getUserSessionId());
-        List<Recipe2> recipes = recipeService.getRecipesByUsersSessionId(employee.get().getUser_fk());
-        for (Recipe2 recipe : recipes) {
+        List<Recipe> recipes = recipeService.getRecipesByUsersSessionId(employee.get().getUser_fk());
+        for (Recipe recipe : recipes) {
             ordersMap.put(recipe, 0D);
         }
     }
@@ -207,7 +207,7 @@ public class EmployeeWorkGui extends VerticalLayout {
     }
 
 
-    private void checkIfEnoughProducts(Recipe2 recipe, Double counter, Button button) {
+    private void checkIfEnoughProducts(Recipe recipe, Double counter, Button button) {
         int count = 0;
         for (int i = 0; i < recipe.getRequiredProducts().size(); i++) {
             Product product = productService.getProductByIdFetch(recipe.getRequiredProducts().get(i).getProduct_fk());

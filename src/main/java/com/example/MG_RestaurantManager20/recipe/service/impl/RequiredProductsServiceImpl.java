@@ -1,8 +1,8 @@
-package com.example.MG_RestaurantManager20.recipe2.service.impl;
+package com.example.MG_RestaurantManager20.recipe.service.impl;
 
-import com.example.MG_RestaurantManager20.recipe2.adapters.database.RequiredProductsRepository;
-import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
-import com.example.MG_RestaurantManager20.recipe2.service.RequiredProductsService;
+import com.example.MG_RestaurantManager20.recipe.adapters.database.RequiredProductsRepository;
+import com.example.MG_RestaurantManager20.recipe.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe.service.RequiredProductsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

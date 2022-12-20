@@ -1,8 +1,8 @@
-package com.example.MG_RestaurantManager20.recipe2.service.impl;
+package com.example.MG_RestaurantManager20.recipe.service.impl;
 
-import com.example.MG_RestaurantManager20.recipe2.adapters.database.RecipeRepository2;
-import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
-import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
+import com.example.MG_RestaurantManager20.recipe.adapters.database.RecipeRepository;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,33 +13,33 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class RecipeServiceImpl2 implements RecipeService2 {
+public class RecipeServiceImpl implements RecipeService {
 
-    private final RecipeRepository2 recipeRepository;
+    private final RecipeRepository recipeRepository;
 
     @Override
-    public Recipe2 addNewRecipe(Recipe2 recipe) {
+    public Recipe addNewRecipe(Recipe recipe) {
         return recipeRepository.save(recipe);
     }
 
     @Override
-    public Recipe2 getRecipeById(long recipeId) {
+    public Recipe getRecipeById(long recipeId) {
         return recipeRepository.getById(recipeId);
     }
 
     @Override
-    public List<Recipe2> getRecipesByUsersSessionId(Long recipeId) {
+    public List<Recipe> getRecipesByUsersSessionId(Long recipeId) {
         return recipeRepository.getRecipesByUsersSessionId(recipeId);
     }
 
     @Override
-    public List<Recipe2> getAllRecipes() {
+    public List<Recipe> getAllRecipes() {
         return recipeRepository.findAll();
     }
 
     @Override
     @Transactional
-    public Recipe2 updateRecipeById(long recipeId, Recipe2 recipe) {
+    public Recipe updateRecipeById(long recipeId, Recipe recipe) {
         recipeRepository.findById(recipeId).orElseThrow(() -> {
             throw new IllegalStateException("Recipe with this ID: '" + recipeId + "' doesn't exists.");
         });
@@ -58,9 +58,9 @@ public class RecipeServiceImpl2 implements RecipeService2 {
     }
 
     @Override
-    public void deleteSelectedRecipes(Set<Recipe2> recipes) {
+    public void deleteSelectedRecipes(Set<Recipe> recipes) {
         var idList = recipes.stream()
-                .map(Recipe2::getId).collect(Collectors.toList());
+                .map(Recipe::getId).collect(Collectors.toList());
 
         recipeRepository.deleteAllById(idList);
     }

@@ -1,14 +1,14 @@
-package com.example.MG_RestaurantManager20.recipe2.gui;
+package com.example.MG_RestaurantManager20.recipe.gui;
 
 import com.example.MG_RestaurantManager20.auth.UserSession;
 import com.example.MG_RestaurantManager20.employee.gui.EmployeeGui;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.gui.ProductGui;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
-import com.example.MG_RestaurantManager20.recipe2.domain.Recipe2;
-import com.example.MG_RestaurantManager20.recipe2.domain.RequiredProducts;
-import com.example.MG_RestaurantManager20.recipe2.service.RecipeService2;
-import com.example.MG_RestaurantManager20.recipe2.service.RequiredProductsService;
+import com.example.MG_RestaurantManager20.recipe.domain.Recipe;
+import com.example.MG_RestaurantManager20.recipe.domain.RequiredProducts;
+import com.example.MG_RestaurantManager20.recipe.service.RecipeService;
+import com.example.MG_RestaurantManager20.recipe.service.RequiredProductsService;
 import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
@@ -42,7 +42,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 @Route("RecipeGui2")
 @PageTitle("RecipeGui2")
-public class RecipeGui2 extends VerticalLayout {
+public class RecipeGui extends VerticalLayout {
 
     private final UserSession userSession;
 
@@ -60,11 +60,11 @@ public class RecipeGui2 extends VerticalLayout {
 
     private final HorizontalLayout header = new HorizontalLayout(headerLogo, headerButtons, headerLogOut);
 
-    private final RecipeService2 recipeService;
+    private final RecipeService recipeService;
 
-    private final Grid<Recipe2> recipeGrid = new Grid<>(Recipe2.class);
+    private final Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
 
-    private final Binder<Recipe2> binder = new Binder<>(Recipe2.class);
+    private final Binder<Recipe> binder = new Binder<>(Recipe.class);
 
     private final TextField nameTextField = new TextField("Name");
     private final TextField descriptionTextField = new TextField("Description");
@@ -96,7 +96,7 @@ public class RecipeGui2 extends VerticalLayout {
     private final HorizontalLayout horizontalLayoutProduct =
             new HorizontalLayout(nameProductComboBox, quantityProductNumberField, addProductButton, deleteProductButton, returnButton);
 
-    public RecipeGui2(UserSession userSession, RecipeService2 recipeService, RequiredProductsService requiredProductsService, ProductService productService) {
+    public RecipeGui(UserSession userSession, RecipeService recipeService, RequiredProductsService requiredProductsService, ProductService productService) {
         this.userSession = userSession;
         this.recipeService = recipeService;
         this.requiredProductsService = requiredProductsService;
@@ -112,7 +112,7 @@ public class RecipeGui2 extends VerticalLayout {
             updateRecipeGrid();
 
             logoImage.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(UserMainMenu.class));
-            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui2.class));
+            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui.class));
             productsButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(ProductGui.class));
             employeesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(EmployeeGui.class));
             logOutButton.addClickListener(logoImageClickEvent -> {
@@ -132,7 +132,7 @@ public class RecipeGui2 extends VerticalLayout {
                     String description = descriptionTextField.getValue();
                     description = description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase();
 
-                    recipeService.addNewRecipe(new Recipe2(userSession.getUserSessionId(), name, description));
+                    recipeService.addNewRecipe(new Recipe(userSession.getUserSessionId(), name, description));
 
                     nameTextField.clear();
                     descriptionTextField.clear();
@@ -191,8 +191,8 @@ public class RecipeGui2 extends VerticalLayout {
 
 
 //EDIT
-            Editor<Recipe2> editor = recipeGrid.getEditor();
-            Grid.Column<Recipe2> editColumn = recipeGrid.addComponentColumn(recipe -> {
+            Editor<Recipe> editor = recipeGrid.getEditor();
+            Grid.Column<Recipe> editColumn = recipeGrid.addComponentColumn(recipe -> {
                 Button editButton = new Button("Edit");
                 editButton.addClickListener(editClickEvent -> {
                     editor.editItem(recipe);
@@ -208,7 +208,7 @@ public class RecipeGui2 extends VerticalLayout {
             Button saveButton = new Button("Save", e -> {
                 if (!(editor.getItem().getName().equals(nameEditField.getValue()) && editor.getItem().getDescription().equals(descriptionEditField.getValue())
                         || nameEditField.getValue().isEmpty() || descriptionEditField.getValue().isEmpty())) {
-                    recipeService.updateRecipeById(editor.getItem().getId(), new Recipe2(nameEditField.getValue(), descriptionEditField.getValue(), editor.getItem().getRequiredProducts()));
+                    recipeService.updateRecipeById(editor.getItem().getId(), new Recipe(nameEditField.getValue(), descriptionEditField.getValue(), editor.getItem().getRequiredProducts()));
                     editor.save();
                 }
                 updateRecipeGrid();
@@ -284,7 +284,7 @@ public class RecipeGui2 extends VerticalLayout {
         requiredProductsGrid.setItems(requiredProductsService.getAllRequiredProductsByRecipeId(recipeId));
     }
 
-    private Notification createAcceptNotificationForRecipe(Set<Recipe2> selectedItems) {
+    private Notification createAcceptNotificationForRecipe(Set<Recipe> selectedItems) {
         Notification notification = new Notification();
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -293,7 +293,7 @@ public class RecipeGui2 extends VerticalLayout {
 
         String text;
         if (selectedItems.size() == 1) {
-            Recipe2 recipe = selectedItems.iterator().next();
+            Recipe recipe = selectedItems.iterator().next();
             text = String.format("You want to delete %s recipe! Are you sure?", recipe.getName());
         } else {
             text = String.format("You want to delete %d recipes! Are you sure?", selectedItems.size());
@@ -364,13 +364,13 @@ public class RecipeGui2 extends VerticalLayout {
         nameEditField.setWidthFull();
         binder.forField(nameEditField)
                 .asRequired("Name must not be empty")
-                .bind(Recipe2::getName, Recipe2::setName);
+                .bind(Recipe::getName, Recipe::setName);
         recipeGrid.getColumnByKey("name").setEditorComponent(nameEditField);
 
         descriptionEditField.setWidthFull();
         binder.forField(descriptionEditField)
                 .asRequired("Description must not be empty")
-                .bind(Recipe2::getDescription, Recipe2::setDescription);
+                .bind(Recipe::getDescription, Recipe::setDescription);
         recipeGrid.getColumnByKey("description").setEditorComponent(descriptionEditField);
 
         // TODO Jest rzucany błąd gdy klikniemy na dwa guziki tego rodzaju (editor jest pełny)

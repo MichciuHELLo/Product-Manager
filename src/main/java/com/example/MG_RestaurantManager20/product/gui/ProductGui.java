@@ -5,7 +5,7 @@ import com.example.MG_RestaurantManager20.employee.gui.EmployeeGui;
 import com.example.MG_RestaurantManager20.product.domain.Product;
 import com.example.MG_RestaurantManager20.product.domain.ProductUnit;
 import com.example.MG_RestaurantManager20.product.service.ProductService;
-import com.example.MG_RestaurantManager20.recipe2.gui.RecipeGui2;
+import com.example.MG_RestaurantManager20.recipe.gui.RecipeGui;
 import com.example.MG_RestaurantManager20.user.gui.UserMainMenu;
 import com.example.MG_RestaurantManager20.user.gui.UserSignInGui;
 import com.vaadin.flow.component.Text;
@@ -92,7 +92,7 @@ public class ProductGui extends VerticalLayout {
             updateGrid();
 
             logoImage.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(UserMainMenu.class));
-            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui2.class));
+            recipesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(RecipeGui.class));
             productsButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(ProductGui.class));
             employeesButton.addClickListener(logoImageClickEvent -> UI.getCurrent().navigate(EmployeeGui.class));
             logOutButton.addClickListener(logoImageClickEvent -> {
