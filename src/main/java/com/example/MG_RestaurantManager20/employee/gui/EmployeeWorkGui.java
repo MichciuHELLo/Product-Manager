@@ -138,6 +138,7 @@ public class EmployeeWorkGui extends VerticalLayout {
                     }
                     // TODO Wysyłka maila jeśli stan produków zszedł poniżej minimum
                     Notification.show("You placed an order!").setPosition(Notification.Position.BOTTOM_CENTER);
+                    ordersMap.clear();
                     updateGrid();
                     configureMapOfOrders();
                 } else {

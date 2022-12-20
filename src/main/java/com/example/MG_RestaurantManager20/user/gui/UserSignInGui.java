@@ -60,7 +60,7 @@ public class UserSignInGui extends Composite {
                         passwordField.getValue(),
                         roleComboBox.getValue()
                 )),
-                new RouterLink("Forgot password?", UserChangePasswordGui.class),
+                new RouterLink("Change password", UserChangePasswordGui.class),
                 new RouterLink("New account? Register", UserRegisterGui.class)
         );
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
