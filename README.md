@@ -1,5 +1,5 @@
 # Product-Manager
-Java with Spring Boot and Vaadin (Not finished!)
+Java with Spring Boot and Vaadin
 
 ---- Photos ----
 
